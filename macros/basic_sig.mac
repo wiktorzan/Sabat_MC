@@ -1,0 +1,8 @@
+/run/initialize
+/control/verbose 2
+/run/verbose 2
+/random/setSeeds 8989 1234567 
+/analysis/setActivation true
+/analysis/setFileName test3.root
+/run/printProgress 500
+/run/beamOn 10000

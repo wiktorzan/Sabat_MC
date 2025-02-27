@@ -1,0 +1,10 @@
+/vis/open OGL 600x600-0+0
+/vis/viewer/set/background white
+/vis/drawVolume
+/vis/viewer/zoom 1.4
+/vis/viewer/set/style wireframe
+/vis/scene/add/axes 0 0 0 1.5 m
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+/vis/viewer/set/autoRefresh true
+/vis/verbose warnings

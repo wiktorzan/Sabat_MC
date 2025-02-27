@@ -1,0 +1,15 @@
+/run/initialize
+/control/verbose 2
+/run/verbose 2
+/random/setSeeds 1 101
+#/vis/open OGLSQt # This automatically opens a graphic window.
+/vis/drawVolume
+/vis/scene/add/trajectories smooth
+/vis/scene/endOfEventAction accumulate
+/analysis/setActivation true
+/analysis/setFileName sample.root
+#/analysis/SetNtupleMerging true
+#/analysis/setFileName outputFinal
+#/run/setCutForAGivenParticle e-  7. mm
+/run/printProgress 1000
+/run/beamOn 7000
