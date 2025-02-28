@@ -18,5 +18,5 @@
 
 /gun/position 0 -90.5 0 cm
 
-/run/printProgress 20
-/run/beamOn 20
+/run/printProgress 100
+/run/beamOn 2000

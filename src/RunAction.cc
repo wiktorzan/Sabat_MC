@@ -14,15 +14,9 @@
 
 RunAction::RunAction()
 {
-  
-  //following 4 lines to enable analysis.
-   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
-   //analysisManager->SetNtupleMerging(true);
-   //analysisManager->SetVerboseLevel(2);
-   analysisManager->SetFirstNtupleId(0);
-
-   // Create ntuple :
-    analysisManager->CreateNtuple("ekin_time", "Energy and time");
+  G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+  analysisManager->SetFirstNtupleId(0);
+  analysisManager->CreateNtuple("ekin_time", "Energy and time");
   analysisManager->CreateNtupleDColumn("EnergyDeposit");
   analysisManager->CreateNtupleDColumn("Time");
   analysisManager->CreateNtupleDColumn("X");
@@ -47,21 +41,18 @@ RunAction::RunAction()
   analysisManager->CreateNtupleDColumn("X2");
   analysisManager->CreateNtupleDColumn("Y2");
   analysisManager->CreateNtupleDColumn("Z2");
- // analysisManager->CreateNtupleDColumn("Momentum");
   analysisManager->FinishNtuple();
-
-  }
+}
 
 RunAction::~RunAction()
 {
-
-    auto analysisManager = G4AnalysisManager::Instance();
-    analysisManager->Write();
-     analysisManager->CloseFile();
+  auto analysisManager = G4AnalysisManager::Instance();
+  analysisManager->Write();
+  analysisManager->CloseFile();
 }
+
 void RunAction::BeginOfRunAction(const G4Run*)
 {
-
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->OpenFile();
 }
@@ -71,8 +62,7 @@ void RunAction::EndOfRunAction(const G4Run* run)
   G4int nofEvents = run->GetNumberOfEvent();
 }
 
-void RunAction::AddSecondary(const G4ParticleDefinition* particle, 
-		G4double energy)
+void RunAction::AddSecondary(const G4ParticleDefinition* particle, G4double energy)
 {
   return;
 }

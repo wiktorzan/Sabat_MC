@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
 
-project(J-PETS)
+project(Sabat_exe)
 
 option(WITH_GEANT4_UIVIS "Build with Geant4 UI and Vis drivers" ON)
 if(WITH_GEANT4_UIVIS)
@@ -30,8 +30,8 @@ foreach(_file ${macros})
     )
 endforeach()
 
-add_executable(J-PETS main.cc ${sources} ${headers})
-target_link_libraries(J-PETS ${Geant4_LIBRARIES})
-target_link_libraries(J-PETS ${cadmesh_LIBRARIES})
+add_executable(Sabat_exe main.cc ${sources} ${headers})
+target_link_libraries(Sabat_exe ${Geant4_LIBRARIES})
+target_link_libraries(Sabat_exe ${cadmesh_LIBRARIES})
 
-install(TARGETS J-PETS DESTINATION bin)
+install(TARGETS Sabat_exe DESTINATION bin)

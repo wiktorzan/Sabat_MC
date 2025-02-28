@@ -28,8 +28,6 @@
 #include <G4HadronElasticPhysics.hh>
 #include <G4PenelopePhotoElectricModel.hh>
 
-
-
 //----------------------------------------
 
 //#include "HadronElasticPhysicsHP.hh"
@@ -64,86 +62,28 @@
 #include "NeutronHPphysics.hh"
 #include "G4EmExtraPhysics.hh"
 
-//++++++++++++++++++++++
-
-PhysicsList::PhysicsList() :
-    G4VModularPhysicsList()
+PhysicsList::PhysicsList() : G4VModularPhysicsList()
 {
-
-    SetVerboseLevel(1);
- // Hadron Elastic scattering
-    RegisterPhysics( new G4HadronElasticPhysicsHP() );
- // RegisterPhysics( new NeutronHPphysics());
- 
- // Hadron Inelastic Physics
-   // RegisterPhysics( new G4HadronPhysicsFTFP_BERT_HP(1));   
-    RegisterPhysics( new G4HadronPhysicsQGSP_BIC_HP());
-    // RegisterPhysics( new G4HadronInelasticQBBC(1));
-    ////RegisterPhysics( new G4HadronPhysicsINCLXX(verb));
-    // RegisterPhysics( new G4HadronPhysicsQGSP_BIC());
-  
-  
-// Ion Physics
-     RegisterPhysics( new G4IonPhysics(1));
- // RegisterPhysics( new G4IonINCLXXPhysics(verb));
-   
- // Gamma-Nuclear Physics
-    RegisterPhysics( new GammaNuclearPhysics("gamma"));
-    
-// Em interactions    
-    RegisterPhysics(new G4EmStandardPhysics());
- 
- // Decay
- // RegisterPhysics(new G4DecayPhysics());
- 
- // Radioactive decay
- // RegisterPhysics(new G4RadioactiveDecayPhysics());
+  SetVerboseLevel(1);
+  RegisterPhysics(new G4HadronElasticPhysicsHP() );
+  RegisterPhysics(new G4HadronPhysicsQGSP_BIC_HP());
+  RegisterPhysics(new G4IonPhysics(1));
+  RegisterPhysics(new GammaNuclearPhysics("gamma"));
+  RegisterPhysics(new G4EmStandardPhysics());
 }
 PhysicsList::~PhysicsList()
-{    ;  }
+{;}
 
 
 void PhysicsList::ConstructParticle()
 {
-    // Call parent method. can be Replaced, if required
-    G4VModularPhysicsList::ConstructParticle();
+  G4VModularPhysicsList::ConstructParticle();
 }
 
 void PhysicsList::ConstructProcess()
 {
-    // Call parent method. Replace it, if required
-    G4VModularPhysicsList::ConstructProcess();
+  G4VModularPhysicsList::ConstructProcess();
 }
 
 void PhysicsList::SetCuts()
-{
-    // sks - The method SetCuts() is mandatory in the interface. Here, one just use
-    // the default SetCuts() provided by the base class.
-    // Call parent method. Replace it, if required
-   // G4VUserPhysicsList::SetCuts(1.*mm,"e-"); 
-
-/* commented to check for missing tracks - adam stuff
-     SetCutValue(50 * mm, "e+");
-     SetCutValue(50 * mm, "La139");
-     SetCutValue(50 * mm, "Br81");
-     SetCutValue(50 * mm, "Br79"); 
-     SetCutValue(50 * mm, "La138");
-     SetCutValue(50 * mm, "Br80");
-     SetCutValue(50 * mm, "Br78");
-     SetCutValue(50 * mm, "Br82");
-     SetCutValue(50 * mm, "La140");
-     SetCutValue(50 * mm, "Se78");
-     SetCutValue(50 * mm, "proton");
-     SetCutValue(50 * mm, "Ce141");
-     SetCutValue(50 * mm, "Ce142");
-     SetCutValue(50 * mm, "Ce139");
-     SetCutValue(50 * mm, "Ce140");
-     SetCutValue(50 * mm, "Ba139");
-     SetCutValue(50 * mm, "C13");
-     SetCutValue(50 * mm, "deuteron");
-  */
-  //  SetCutValue(50 * mm, "e-");
-  //  SetCutValue(10 * mm, "gamma");
-
-
-}
+{}

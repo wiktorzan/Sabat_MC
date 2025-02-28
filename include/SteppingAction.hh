@@ -8,7 +8,6 @@ class RunAction;
 class SteppingAction : public G4UserSteppingAction
 {
 public:
-    //! constructor
     SteppingAction(RunAction*);
 
     void UserSteppingAction(const G4Step*) override;

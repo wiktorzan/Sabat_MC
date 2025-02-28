@@ -23,18 +23,11 @@
 #include "G4RayleighScattering.hh"
 #include "G4LivermoreRayleighModel.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-GammaNuclearPhysics::GammaNuclearPhysics(const G4String& name)
-:  G4VPhysicsConstructor(name)
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+GammaNuclearPhysics::GammaNuclearPhysics(const G4String& name) : G4VPhysicsConstructor(name)
+{}
 
 GammaNuclearPhysics::~GammaNuclearPhysics()
-{ }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+{}
 
 void GammaNuclearPhysics::ConstructProcess()
 {
@@ -48,6 +41,7 @@ void GammaNuclearPhysics::ConstructProcess()
    //
   // pManager->AddDiscreteProcess(process);
 
+// Temptorary to fix the compilation problem with missing cross-sections
    G4RayleighScattering* theRayleigh = new G4RayleighScattering();
    pManager->AddDiscreteProcess(theRayleigh);
 
@@ -63,5 +57,3 @@ void GammaNuclearPhysics::ConstructProcess()
    theGammaConversion->SetEmModel(new G4BetheHeitler5DModel());
    pManager->AddDiscreteProcess(theGammaConversion);
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

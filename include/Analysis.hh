@@ -5,5 +5,4 @@
 
 #include "G4AnalysisManager.hh"
 
-
 #endif

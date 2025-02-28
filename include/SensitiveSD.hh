@@ -8,16 +8,16 @@
 class SensitiveSD : public G4VSensitiveDetector
 {
 public:
-    SensitiveSD(G4String name);
+  SensitiveSD(G4String name);
 
-    void Initialize(G4HCofThisEvent*) override;
+  void Initialize(G4HCofThisEvent*) override;
 
 protected:
-    G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) override;
+  G4bool ProcessHits(G4Step* aStep, G4TouchableHistory* ROhist) override;
 
 private:
-    SensitiveHitsCollection* fHitsCollection { nullptr };
-    G4int fHitsCollectionId { -1 };
+  SensitiveHitsCollection* fHitsCollection {nullptr};
+  G4int fHitsCollectionId {-1};
 };
 
 #endif

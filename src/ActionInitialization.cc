@@ -9,20 +9,15 @@
 #include "StackingAction.hh"
 #include "SteppingAction.hh"
 
-//! Class constructor
-ActionInitialization::ActionInitialization() :
-  G4VUserActionInitialization()
+ActionInitialization::ActionInitialization() : G4VUserActionInitialization()
 {;}
 
-//! Class destructor
 ActionInitialization::~ActionInitialization()
 {;}
 
 void ActionInitialization::Build() const
 {
-    
     SetUserAction(new PrimaryGeneratorAction());
-
 
     RunAction* theRunAction = new RunAction();
     SetUserAction(theRunAction);
@@ -32,13 +27,10 @@ void ActionInitialization::Build() const
     SetUserAction(new StackingAction(theRunAction));
 
     SetUserAction(new SteppingAction(theRunAction));
-
 }
 
 void ActionInitialization::BuildForMaster() const
 {
    RunAction* runAction = new RunAction();
    SetUserAction(runAction); 
-
-
 }

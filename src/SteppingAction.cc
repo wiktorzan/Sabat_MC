@@ -13,17 +13,14 @@
 #include <iomanip>
 using namespace std;
 
-SteppingAction::SteppingAction(RunAction* runAction)
-    : fRunAction(runAction)
-{
-}
+SteppingAction::SteppingAction(RunAction* runAction) : fRunAction(runAction)
+{}
 
 void SteppingAction::UserSteppingAction(const G4Step* aStep)
 {
-
-G4int Event;
-   const G4Event* evnt = G4RunManager::GetRunManager()->GetCurrentEvent();
-   Event = evnt->GetEventID();
+  G4int Event;
+  const G4Event* evnt = G4RunManager::GetRunManager()->GetCurrentEvent();
+  Event = evnt->GetEventID();
   G4VPhysicalVolume* volume=aStep->GetPreStepPoint()->GetTouchable()->GetVolume();
   G4VPhysicalVolume* volume1=aStep->GetPostStepPoint()->GetTouchable()->GetVolume();
   G4StepPoint * preStepPoint = aStep->GetPreStepPoint();

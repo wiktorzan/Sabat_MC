@@ -27,9 +27,6 @@
 /// \brief Definition of the NeutronHPMessenger class
 //
 // $Id: NeutronHPMessenger.hh 66241 2012-12-13 18:34:42Z gunter $
-//
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #ifndef NeutronHPMessenger_h
 #define NeutronHPMessenger_h 1
@@ -41,23 +38,19 @@ class NeutronHPphysics;
 class G4UIdirectory;
 class G4UIcmdWithABool;
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 class NeutronHPMessenger: public G4UImessenger
 {
-  public:
-    NeutronHPMessenger(NeutronHPphysics*);
-   ~NeutronHPMessenger();
+public:
+  NeutronHPMessenger(NeutronHPphysics*);
+  ~NeutronHPMessenger();
     
-    virtual void SetNewValue(G4UIcommand*, G4String);
+  virtual void SetNewValue(G4UIcommand*, G4String);
     
-  private:    
-    NeutronHPphysics*  fNeutronPhysics;
+private:
+  NeutronHPphysics*  fNeutronPhysics;
     
-    G4UIdirectory*     fPhysDir;      
-    G4UIcmdWithABool*  fThermalCmd;
+  G4UIdirectory*     fPhysDir;
+  G4UIcmdWithABool*  fThermalCmd;
 };
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #endif

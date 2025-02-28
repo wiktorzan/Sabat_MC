@@ -25,11 +25,6 @@
 //
 /// \file NeutronHPMessenger.cc
 /// \brief Implementation of the NeutronHPMessenger class
-//
-// $Id: NeutronHPMessenger.cc 67268 2013-02-13 11:38:40Z ihrivnac $
-//
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 #include "NeutronHPMessenger.hh"
 
@@ -38,11 +33,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
-NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys)
-:G4UImessenger(),fNeutronPhysics(phys),
- fPhysDir(0), fThermalCmd(0)
+NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys) : G4UImessenger(),fNeutronPhysics(phys), fPhysDir(0), fThermalCmd(0)
 { 
   fPhysDir = new G4UIdirectory("/testhadr/phys/");
   fPhysDir->SetGuidance("physics list commands");
@@ -53,20 +44,15 @@ NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys)
   fThermalCmd->AvailableForStates(G4State_PreInit);  
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 NeutronHPMessenger::~NeutronHPMessenger()
 {
   delete fThermalCmd;
   delete fPhysDir;
 }
 
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-
 void NeutronHPMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {   
-  if (command == fThermalCmd)
-   {fNeutronPhysics->SetThermalPhysics(fThermalCmd->GetNewBoolValue(newValue));}
+  if (command == fThermalCmd) {
+    fNeutronPhysics->SetThermalPhysics(fThermalCmd->GetNewBoolValue(newValue));
+  }
 }
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

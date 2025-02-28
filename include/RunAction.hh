@@ -8,22 +8,14 @@
 class RunAction : public G4UserRunAction
 {
 public:
-  //! constructor
   RunAction();
-
-  //! destructor
   ~RunAction();
 
-  //! Main interface
   void BeginOfRunAction(const G4Run*);
   void EndOfRunAction(const G4Run*);
 
   void AddSecondary(const G4ParticleDefinition*, G4double energy);
   void AddTrackLength(G4double length);
-
-
-private:
-  
 };
 
 #endif
