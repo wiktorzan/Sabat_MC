@@ -11,6 +11,9 @@
 #include <G4Alpha.hh>
 #include <G4Proton.hh>
 
+//automatic name creation
+#include <chrono>
+
 
 RunAction::RunAction()
 {
@@ -54,7 +57,28 @@ RunAction::~RunAction()
 void RunAction::BeginOfRunAction(const G4Run*)
 {
   auto analysisManager = G4AnalysisManager::Instance();
-  analysisManager->OpenFile();
+
+  //automatic name creation
+
+  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+  std::time_t in_time_t = std::chrono::system_clock::to_time_t(now);
+  std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+  std::tm* time_info = std::localtime(&in_time_t);
+  std::ostringstream oss;
+  oss << std::put_time(time_info, "%Y-%m-%d_%H_%M_%S");
+
+  std::string filename = "output_";
+  filename += oss.str();
+  filename += "_";
+  filename += std::to_string(ms.count());
+  filename += ".root";
+  
+  std::cout << "Filename: " << filename << std::endl;
+
+  analysisManager->OpenFile(filename);
+
+  // analysisManager->OpenFile();
 }
 
 void RunAction::EndOfRunAction(const G4Run* run)
