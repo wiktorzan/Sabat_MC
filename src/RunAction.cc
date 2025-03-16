@@ -73,12 +73,13 @@ void RunAction::BeginOfRunAction(const G4Run*)
   filename += "_";
   filename += std::to_string(ms.count());
   filename += ".root";
+  std::string path = "../DATA/" + filename;
+  analysisManager->SetFileName(path); 
   
-  std::cout << "Filename: " << filename << std::endl;
+  std::cout << "Filename: " << path << std::endl;
 
-  analysisManager->OpenFile(filename);
+  analysisManager->OpenFile(path);
 
-  // analysisManager->OpenFile();
 }
 
 void RunAction::EndOfRunAction(const G4Run* run)
