@@ -1,2 +1,4 @@
 build/
 .vscode/
+analysis/
+data_read_only/

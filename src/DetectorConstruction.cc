@@ -303,7 +303,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double targetWallSize = 3*mm;
   G4Box* solidTGVolume = new G4Box("TargetVolume", 0.5*targetCoverDimX - targetWallSize, 0.5*targetCoverDimY - targetWallSize,
                                    0.5*targetCoverDimZ - targetWallSize);
-  G4LogicalVolume* logicTGVolume = new G4LogicalVolume(solidTGVolume, SeaWater, "TargetVolume");
+  // Zmiana materiału targetu na gaz musztardowy, by porownac wyniki z publikacja. Wykorzystano materiał z pierwiastków, nie z biblioteki -WZ
+  G4LogicalVolume* logicTGVolume = new G4LogicalVolume(solidTGVolume, C4H8Cl2S, "TargetVolume");
   new G4PVPlacement(0, G4ThreeVector(), logicTGVolume, "TargetVolume", logicTGVolumeCover, false, 5, checkOverlaps);
 
   G4VisAttributes* mustardVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0));
