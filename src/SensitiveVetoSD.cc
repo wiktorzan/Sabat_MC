@@ -1,4 +1,4 @@
-#include "SensitiveSD.hh"
+#include "SensitiveVetoSD.hh"
 
 #include <G4SDManager.hh>
 #include <G4SystemOfUnits.hh>
@@ -9,12 +9,12 @@
 #include "G4VProcess.hh"   
 
 
-SensitiveSD::SensitiveSD(G4String name) : G4VSensitiveDetector(name)
+SensitiveVetoSD::SensitiveVetoSD(G4String name) : G4VSensitiveDetector(name)
 {
-  collectionName.insert("LaBr_det");
+  collectionName.insert("Veto_det");
 }
 
-G4bool SensitiveSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
+G4bool SensitiveVetoSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
 {
   SensitiveHit* hit = new SensitiveHit();
   G4StepPoint * postStepPoint = aStep->GetPostStepPoint();
@@ -56,7 +56,7 @@ G4bool SensitiveSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
   return true;
 }
 
-void SensitiveSD::Initialize(G4HCofThisEvent* hcof)
+void SensitiveVetoSD::Initialize(G4HCofThisEvent* hcof)
 {
   fHitsCollection = new SensitiveHitsCollection(SensitiveDetectorName, collectionName[0]);
 

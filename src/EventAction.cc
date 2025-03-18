@@ -34,17 +34,23 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     return;
 
   if (fScintillatorId<0) {
-    fScintillatorId = sdm->GetCollectionID("Detector/energy_time");
+    fScintillatorId = sdm->GetCollectionID("Detector/LaBr_det");
     G4cout << "Event action : Scintillator id is = " << fScintillatorId << G4endl;
+
+    fScintillatorIdVeto = sdm->GetCollectionID("Veto/Veto_det");
+    G4cout << "Event action : Veto scintillator id is = " << fScintillatorIdVeto << G4endl;
   }
 
   const G4Event* evnt = G4RunManager::GetRunManager()->GetCurrentEvent();
   SensitiveHitsCollection* hitsColl=0;
+  SensitiveHitsCollection* hitsVetoColl=0;
 
-  if(hcofEvent)
+  if(hcofEvent) {
     hitsColl = dynamic_cast<SensitiveHitsCollection*>(hcofEvent->GetHC(fScintillatorId));
+    hitsVetoColl = dynamic_cast<SensitiveHitsCollection*>(hcofEvent->GetHC(fScintillatorIdVeto));
+  }
 
-  if(hitsColl) {
+  if (hitsColl) {
     int numberHits = hitsColl->entries(), tempEvent=0;
 
     double totEdep = 0.; // in MeV, but trying to set as double to fix the issue with zero TotEDep
@@ -75,9 +81,9 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       analysis->FillNtupleIColumn(14, hit->GetTrackID());
       analysis->FillNtupleIColumn(15, evnt->GetEventID());
       G4ThreeVector positionPostStep = hit->GetPosition2();
-      analysis->FillNtupleDColumn(21, positionPostStep.getX() / cm);
-      analysis->FillNtupleDColumn(22, positionPostStep.getY() / cm);
-      analysis->FillNtupleDColumn(23, positionPostStep.getZ() / cm);
+      analysis->FillNtupleDColumn(19, positionPostStep.getX() / cm);
+      analysis->FillNtupleDColumn(20, positionPostStep.getY() / cm);
+      analysis->FillNtupleDColumn(21, positionPostStep.getZ() / cm);
 
       analysis->AddNtupleRow();
 
@@ -92,5 +98,26 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
     if (tempEvent == evnt->GetEventID())
       G4cout << "////////////////////////////////////////////" << G4endl;
+  }
+
+  if (hitsVetoColl) {
+    int numberHits = hitsVetoColl->entries();
+
+    for(int i1=0; i1<numberHits; i1++) {
+      auto hit = (*hitsVetoColl)[i1];
+      G4String processCheck = hit->GetPrcName();
+
+      double energy_step=0.;
+      energy_step = hit->GetDeltaEnergy()/MeV;
+
+      analysis->FillNtupleDColumn(24, energy_step);
+      analysis->FillNtupleDColumn(25, hit->GetTime() / us);
+      G4ThreeVector position = hit->GetPosition();
+      analysis->FillNtupleDColumn(26, position.getX() / cm);
+      analysis->FillNtupleDColumn(27, position.getY() / cm);
+      analysis->FillNtupleDColumn(28, position.getZ() / cm);
+
+      analysis->AddNtupleRow();
+    }
   }
 }

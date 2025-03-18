@@ -18,6 +18,7 @@ public:
   
 private:
   G4int fScintillatorId{-1};
+  G4int fScintillatorIdVeto{-1};
 };
 
 #endif

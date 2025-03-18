@@ -19,6 +19,9 @@ public:
 
   void GeneratePrimaries(G4Event* anEvent) override;
 private:
+  bool fShootNeutron = true;
+  bool fShootAlpha = true;
+
   G4ParticleGun* fGun;
 };
 

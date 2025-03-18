@@ -24,6 +24,8 @@
 #include "G4MultiFunctionalDetector.hh"
 #include <G4VSensitiveDetector.hh>
 #include <G4SDManager.hh>
+
+#include "SensitiveVetoSD.hh"
 #include "SensitiveSD.hh"
 
 #include <sstream>
@@ -47,7 +49,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Element* Br = man->FindOrBuildElement("Br");
   G4Element* Ce = man->FindOrBuildElement("Ce");
 
-  G4Material *VetoMat = man->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  G4Material* Silicon = new G4Material("Silicon", 14., 28.0855*g/mole, 2.33*g/cm3);
+  G4Material* VetoMat = Silicon; //man->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
 
   G4Element* H  = man->FindOrBuildElement("H");
   G4Element* B  = man->FindOrBuildElement("B");
@@ -83,28 +86,28 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   SandSediment->AddElement(C, 0.35344*perCent);
   SandSediment->AddElement(O, 61.9999*perCent);
   SandSediment->AddElement(F, 0.00001*perCent);
-  SandSediment->AddElement(Na,1.34864*perCent);
-  SandSediment->AddElement(Mg,0.00734*perCent);
-  SandSediment->AddElement(Al,2.59482*perCent);
-  SandSediment->AddElement(Si,27.5365*perCent);
+  SandSediment->AddElement(Na, 1.34864*perCent);
+  SandSediment->AddElement(Mg, 0.00734*perCent);
+  SandSediment->AddElement(Al, 2.59482*perCent);
+  SandSediment->AddElement(Si, 27.5365*perCent);
   SandSediment->AddElement(S, 0.00517*perCent);
-  SandSediment->AddElement(Cl,0.11055*perCent);
+  SandSediment->AddElement(Cl, 0.11055*perCent);
   SandSediment->AddElement(K, 0.87891*perCent);
-  SandSediment->AddElement(Ca,0.84806*perCent);
-  SandSediment->AddElement(V, 0.00100*perCent);
-  SandSediment->AddElement(Cr,0.00100*perCent);
-  SandSediment->AddElement(Fe,1.00237*perCent);
-  SandSediment->AddElement(Co,0.00050*perCent);
-  SandSediment->AddElement(Ni,0.00100*perCent);
-  SandSediment->AddElement(Cu,0.00100*perCent);
-  SandSediment->AddElement(Zn,0.00200*perCent);
-  SandSediment->AddElement(As,0.00080*perCent);
-  SandSediment->AddElement(Br,0.00038*perCent);
-  SandSediment->AddElement(Sr,0.00104*perCent);
-  SandSediment->AddElement(Cd,0.00010*perCent);
+  SandSediment->AddElement(Ca, 0.84806*perCent);
+  SandSediment->AddElement(V,  0.00100*perCent);
+  SandSediment->AddElement(Cr, 0.00100*perCent);
+  SandSediment->AddElement(Fe, 1.00237*perCent);
+  SandSediment->AddElement(Co, 0.00050*perCent);
+  SandSediment->AddElement(Ni, 0.00100*perCent);
+  SandSediment->AddElement(Cu, 0.00100*perCent);
+  SandSediment->AddElement(Zn, 0.00200*perCent);
+  SandSediment->AddElement(As, 0.00080*perCent);
+  SandSediment->AddElement(Br, 0.00038*perCent);
+  SandSediment->AddElement(Sr, 0.00104*perCent);
+  SandSediment->AddElement(Cd, 0.00010*perCent);
   SandSediment->AddElement(Ba, 0.00250*perCent);
   SandSediment->AddElement(Hg, 0.000002*perCent);
-  SandSediment->AddElement(Pb,0.00150*perCent);
+  SandSediment->AddElement(Pb, 0.00150*perCent);
       
   G4Material *vacuum = man->FindOrBuildMaterial("G4_Galactic");
 
@@ -266,17 +269,18 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 
 //Veto construction
-/*  G4double vetoDimx = 20*cm;
-  G4double vetoDimY = 20*mm;
+  //Active area of silicon detector -> 5 - 55 mm (circle radius)
+  G4double vetoDimx = 20*cm;
+  G4double vetoDimY = 2*cm; // 2cm -> max thickness for silicon detectors
   G4double vetoDimZ = 10*cm;
-  G4ThreeVector vetoShift(0,. -10.cm, 0.);
-  G4Box* solidVeto = new G4Box("Veto",0.5*vetoDimx, 0.5*vetoDimY, 0.5*vetoDimZ);
-  G4LogicalVolume* logicVeto = new G4LogicalVolume(solidVeto, VetoMat, "Veto");
-  new G4PVPlacement(0, vetoShift, logicVeto, "Veto", logicSubmarineVolume, false, 13, checkOverlaps);
+  G4ThreeVector vetoShift(0, -12.0*cm, 0.);
+  G4Box* solidVeto = new G4Box("DetectorSi", 0.5*vetoDimx, 0.5*vetoDimY, 0.5*vetoDimZ);
+  G4LogicalVolume* logicVeto = new G4LogicalVolume(solidVeto, VetoMat, "DetectorSi");
+  new G4PVPlacement(0, vetoShift, logicVeto, "DetectorSi", logicSubVolume, false, 13, checkOverlaps);
 
   G4VisAttributes* VetoAtt = new G4VisAttributes(G4Color(1.0,1.,0.5));
-  VetoAtt->SetForceWireframe(true);
-  logicVeto->SetVisAttributes(VetoAtt);*/
+  VetoAtt->SetForceSolid(true);
+  logicVeto->SetVisAttributes(VetoAtt);
 
   G4double neuSourceGuideDimX = 9.5*cm;
   G4double neuSourceGuideDimY = 10*cm;
@@ -409,7 +413,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicShape1->SetVisAttributes(sourceVisAtt);*/
 
 // make plastic scintillators as alpha particle tagging -
-  G4double scinDim_y = 1.9*cm;
+/*  G4double scinDim_y = 1.9*cm;
   G4double scinDim_x = 0.6*cm;
   G4double scinDim_z = 5.0*cm;
   G4Box* AlphaDet = new G4Box("AlphaDetStrips", 0.5*scinDim_x, 0.5*scinDim_y, 0.5*scinDim_z);
@@ -423,7 +427,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   for(int j=0; j<7; j++) {
     G4ThreeVector loc = G4ThreeVector(-2.1*cm + j*0.7*cm, -12.*cm, 0.0);
     new G4PVPlacement(0, loc, AlphaDetLog, "AlphaDetStrips", logicSubVolume, true, j+10, checkOverlaps);       // checking overlaps
-  }
+  }*/
 
 // Iron shielding
   G4double shieldXLength = 10*cm;
@@ -463,8 +467,10 @@ void DetectorConstruction::ConstructSDandField()
     sdManager->SetVerboseLevel(2);
 
     SensitiveSD* myDetector = new SensitiveSD("Detector");   
-	
     SetSensitiveDetector("DetectorLaBr", myDetector); 
-   
     sdManager->AddNewDetector(myDetector);
+
+    SensitiveVetoSD* vetoDetector = new SensitiveVetoSD("Veto");
+    SetSensitiveDetector("DetectorSi", vetoDetector);
+    sdManager->AddNewDetector(vetoDetector);
 }

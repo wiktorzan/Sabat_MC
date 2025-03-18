@@ -32,14 +32,15 @@ GammaNuclearPhysics::~GammaNuclearPhysics()
 void GammaNuclearPhysics::ConstructProcess()
 {
    G4ProcessManager* pManager = G4Gamma::Gamma()->GetProcessManager();
+
+   const G4String & processName = "PhotonInelastic";;
+   G4HadronInelasticProcess* process = new G4HadronInelasticProcess(processName, G4Gamma::Gamma());
    //
-  // G4HadronInelasticProcess* process = new G4HadronInelasticProcess("PhotonInelastic", G4Gamma::Gamma());
+   G4CascadeInterface* bertini = new G4CascadeInterface();
+   bertini->SetMaxEnergy(10*GeV);
+   process->RegisterMe(bertini);
    //
-  // G4CascadeInterface* bertini = new G4CascadeInterface();
-  // bertini->SetMaxEnergy(10*GeV);
-  // process->RegisterMe(bertini);
-   //
-  // pManager->AddDiscreteProcess(process);
+   pManager->AddDiscreteProcess(process);
 
 // Temptorary to fix the compilation problem with missing cross-sections
    G4RayleighScattering* theRayleigh = new G4RayleighScattering();
