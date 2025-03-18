@@ -238,7 +238,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, 0);
 
   G4VisAttributes* worldVisAtt = new G4VisAttributes(G4Colour(1.,1.,0.5));
-  worldVisAtt->SetForceWireframe(true);
+ // worldVisAtt->SetForceWireframe(true);
   logicWorld->SetVisAttributes(worldVisAtt);
 
 //Submarine construction

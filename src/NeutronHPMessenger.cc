@@ -33,7 +33,7 @@
 #include "G4UIdirectory.hh"
 #include "G4UIcmdWithABool.hh"
 
-NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys) : G4UImessenger(),fNeutronPhysics(phys), fPhysDir(0), fThermalCmd(0)
+NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys) : G4UImessenger(), fNeutronPhysics(phys), fPhysDir(0), fThermalCmd(0)
 { 
   fPhysDir = new G4UIdirectory("/testhadr/phys/");
   fPhysDir->SetGuidance("physics list commands");

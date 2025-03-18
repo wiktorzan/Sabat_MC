@@ -42,21 +42,20 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     if (i == 0) {
       fGun->SetParticleDefinition(G4Neutron::Definition());
       fGun->SetParticleEnergy(14.1*MeV);
-      fGun->SetParticlePosition(G4ThreeVector(0,-15*cm,0));
+      fGun->SetParticlePosition(G4ThreeVector(0, -15*cm, 0));
+      fGun->SetParticleMomentumDirection(dirNeu);
 
       analysis->FillNtupleDColumn(17, dirNeu.theta()*(180/CLHEP::pi));
       analysis->FillNtupleDColumn(18, dirNeu.phi()*(180/CLHEP::pi));
-
-      fGun->SetParticleMomentumDirection(dirNeu);
-    } else if (i==1) {
+    } else if (i == 1) {
       G4ParticleDefinition* myParticle = G4ParticleTable::GetParticleTable()->FindParticle("alpha");
       fGun->SetParticleDefinition(myParticle);
-      fGun->SetParticleEnergy(3.490*MeV);
-      fGun->SetParticlePosition(G4ThreeVector(0,-15*cm,0));
+      fGun->SetParticleEnergy(3.49*MeV);
+      fGun->SetParticlePosition(G4ThreeVector(0, -15*cm, 0));
       fGun->SetParticleMomentumDirection(dirAlpha);
 
-      analysis->FillNtupleDColumn(19,dirAlpha.theta()*180/3.1414);
-      analysis->FillNtupleDColumn(20,dirAlpha.phi()*180/3.1414);
+      analysis->FillNtupleDColumn(19, dirAlpha.theta()*180/CLHEP::pi);
+      analysis->FillNtupleDColumn(20, dirAlpha.phi()*180/CLHEP::pi);
     }
     fGun->GeneratePrimaryVertex(anEvent);
   }

@@ -19,9 +19,7 @@ EventAction::~EventAction()
 {;}
 
 void EventAction::BeginOfEventAction(const G4Event* /*anEvent*/)
-{
-    // will use later for more information - SKS
-}
+{;}
 
 void EventAction::EndOfEventAction(const G4Event* anEvent)
 {
@@ -37,7 +35,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
   if (fScintillatorId<0) {
     fScintillatorId = sdm->GetCollectionID("Detector/energy_time");
-    G4cout << "Eventaction : Scintillator id is = " << fScintillatorId << G4endl;
+    G4cout << "Event action : Scintillator id is = " << fScintillatorId << G4endl;
   }
 
   const G4Event* evnt = G4RunManager::GetRunManager()->GetCurrentEvent();
@@ -49,9 +47,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
   if(hitsColl) {
     int numberHits = hitsColl->entries(), tempEvent=0;
 
-    G4double totEdep = 0., energy = 0.0,cosTheta = 0;
-    G4int FlagAlpha = 0, FlagNeu = 0;
-    G4ThreeVector alphaVec, neutronVec;
+    double totEdep = 0.; // in MeV, but trying to set as double to fix the issue with zero TotEDep
 
     for(int i1=0; i1<numberHits; i1++) {
       auto hit = (*hitsColl)[i1];
@@ -67,17 +63,17 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       analysis->FillNtupleDColumn(2, position.getX() / cm);
       analysis->FillNtupleDColumn(3, position.getY() / cm);
       analysis->FillNtupleDColumn(4, position.getZ() / cm);
-      analysis->FillNtupleIColumn(5,hit->GetNbCopy());
-      analysis->FillNtupleIColumn(6,hit->GetParID());
-      analysis->FillNtupleIColumn(7,hit->GetStepID());
-      analysis->FillNtupleSColumn(8,hit->GetParName());
-      analysis->FillNtupleSColumn(9,hit->GetPrcName());
-      analysis->FillNtupleDColumn(10,hit->GetTimeL() / us);
-      analysis->FillNtupleDColumn(11,hit->GetKEnergy()/MeV);
-      analysis->FillNtupleIColumn(12,hit->GetVolName());
-      analysis->FillNtupleSColumn(13,hit->GetVolName2());
-      analysis->FillNtupleIColumn(14,hit->GetTrackID());
-      analysis->FillNtupleIColumn(15,evnt->GetEventID());
+      analysis->FillNtupleIColumn(5, hit->GetNbCopy());
+      analysis->FillNtupleIColumn(6, hit->GetParID());
+      analysis->FillNtupleIColumn(7, hit->GetStepID());
+      analysis->FillNtupleSColumn(8, hit->GetParName());
+      analysis->FillNtupleSColumn(9, hit->GetPrcName());
+      analysis->FillNtupleDColumn(10, hit->GetTimeL() / us);
+      analysis->FillNtupleDColumn(11, hit->GetKEnergy()/MeV);
+      analysis->FillNtupleIColumn(12, hit->GetVolName());
+      analysis->FillNtupleSColumn(13, hit->GetVolName2());
+      analysis->FillNtupleIColumn(14, hit->GetTrackID());
+      analysis->FillNtupleIColumn(15, evnt->GetEventID());
       G4ThreeVector positionPostStep = hit->GetPosition2();
       analysis->FillNtupleDColumn(21, positionPostStep.getX() / cm);
       analysis->FillNtupleDColumn(22, positionPostStep.getY() / cm);
@@ -85,14 +81,14 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
       analysis->AddNtupleRow();
 
-      if ((energy_step>14.1) || (hit->GetKEnergy()>14.1)) {
-        G4cout << " Fishy event = " << evnt->GetEventID() << G4endl;
-        tempEvent=evnt->GetEventID();
+      if (energy_step > 14.1) {
+        G4cout << " Too high energy step in event = " << evnt->GetEventID() << G4endl;
+        tempEvent = evnt->GetEventID();
       }
     }
         
     if (totEdep > 0)
-      analysis->FillNtupleDColumn(16,totEdep);
+      analysis->FillNtupleDColumn(16, totEdep);
 
     if (tempEvent == evnt->GetEventID())
       G4cout << "////////////////////////////////////////////" << G4endl;

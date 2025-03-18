@@ -50,7 +50,7 @@ G4bool SensitiveSD::ProcessHits(G4Step* aStep, G4TouchableHistory* /*ROhist*/)
   hit->SetPrcName(Process);
   hit->SetVolName(CopyNo);
   hit->SetVolName2(IntVol);
-   
+
   fHitsCollection->insert(hit);
 
   return true;

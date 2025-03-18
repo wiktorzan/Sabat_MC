@@ -97,7 +97,7 @@ void NeutronHPphysics::ConstructProcess()
   // model1b
   if (fThermal) {
     model1a->SetMinEnergy(4*eV);   
-   G4ParticleHPThermalScattering* model1b = new G4ParticleHPThermalScattering();
+    G4ParticleHPThermalScattering* model1b = new G4ParticleHPThermalScattering();
     process1->RegisterMe(model1b);
     process1->AddDataSet(new G4ParticleHPThermalScatteringData());
   }
