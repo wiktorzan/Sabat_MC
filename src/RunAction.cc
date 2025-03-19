@@ -47,6 +47,7 @@ RunAction::RunAction()
   analysisManager->CreateNtupleDColumn("Vet_Hit_X");
   analysisManager->CreateNtupleDColumn("Veto_Hit_Y");
   analysisManager->CreateNtupleDColumn("Veto_Hit_Z");
+  analysisManager->CreateNtupleSColumn("Veto_Particles");
   analysisManager->FinishNtuple();
 }
 

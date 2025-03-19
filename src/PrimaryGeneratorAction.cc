@@ -46,10 +46,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
     analysis->FillNtupleDColumn(17, dirNeu.theta()*(180/CLHEP::pi));
     analysis->FillNtupleDColumn(18, dirNeu.phi()*(180/CLHEP::pi));
+    fGun->GeneratePrimaryVertex(anEvent);
   }
-  fGun->GeneratePrimaryVertex(anEvent);
 
-  if (fShootAlpha) {
+ /* if (fShootAlpha) {
     G4ParticleDefinition* myParticle = G4ParticleTable::GetParticleTable()->FindParticle("alpha");
     fGun->SetParticleDefinition(myParticle);
     fGun->SetParticleEnergy(3.49*MeV);
@@ -58,6 +58,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
     analysis->FillNtupleDColumn(22, dirAlpha.theta()*180/CLHEP::pi);
     analysis->FillNtupleDColumn(23, dirAlpha.phi()*180/CLHEP::pi);
-  }
-  fGun->GeneratePrimaryVertex(anEvent);
+    fGun->GeneratePrimaryVertex(anEvent);
+  }*/
 }
