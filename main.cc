@@ -15,6 +15,11 @@ int main(int argc, char** argv)
 {
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
 
+  G4UIExecutive* ui = nullptr;
+  if (argc == 1) {
+    ui = new G4UIExecutive(argc, argv);
+  }
+
   int mask = 01001010;
   using namespace std::chrono;
   system_clock::time_point now = system_clock::now();
@@ -28,20 +33,13 @@ int main(int argc, char** argv)
   runManager->SetUserInitialization(new ActionInitialization());
   runManager->Initialize();
 
-    // Initialize visualization
+// Get the pointer to the User Interface manager
+  G4UImanager* UImanager = G4UImanager::GetUIpointer();
+// Initialize visualization
   G4VisManager* visManager = new G4VisExecutive;
   visManager->Initialize();
 
-    // Get the pointer to the User Interface manager
-  G4UImanager* UImanager = G4UImanager::GetUIpointer();
-
-    // Detect interactive mode (if no arguments) and define UI session
-  G4UIExecutive* ui = nullptr;
-  if (argc == 1) {
-    ui = new G4UIExecutive(argc, argv);
-  }
-
-    // Execute visualization macro (if in interactive mode)
+// Execute visualization macro (if in interactive mode)
   if (ui) {
     UImanager->ApplyCommand("/control/execute macros/vis.mac");
     ui->SessionStart();

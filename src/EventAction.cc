@@ -116,6 +116,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       analysis->FillNtupleDColumn(26, position.getX() / cm);
       analysis->FillNtupleDColumn(27, position.getY() / cm);
       analysis->FillNtupleDColumn(28, position.getZ() / cm);
+      analysis->FillNtupleSColumn(29, hit->GetParName());
 
       analysis->AddNtupleRow();
     }

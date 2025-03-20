@@ -53,22 +53,22 @@ void Sabat_Analysis::Loop()
     nbytes += nb;
 
     if (Time>0) {
-      if (Event != EventID) {
+      if (Event != Event_ID) {
         if (EnergyDepositFinal>0. && EnergyDepositFinal<14.0) {
           EngSmr = gRandom->Gaus(0,1)*(a + b*sqrt(EnergyDepositFinal + c*pow(EnergyDepositFinal, 2)))/(2.35482004503);//original
           EngDep->Fill(EnergyDepositFinal);
           EngDepSmr->Fill(EnergyDepositFinal + EngSmr);
         }
 
-        EnergyDepositFinal=0;
-        EnergyDepositFinal_smr=0;
-        EngSmr=0;
-        Event=EventID;
+        EnergyDepositFinal = 0;
+        EnergyDepositFinal_smr = 0;
+        EngSmr = 0;
+        Event = Event_ID;
       }
 
-    if (Event == EventID) {
-      if (strcmp(volume2, "DetectorLaBr") == 0 && (strcmp(Particles, "gamma") == 0 || strcmp(Particles, "e-") == 0))
-        EnergyDepositFinal = EnergyDepositFinal + EnergyDeposit;
+    if (Event == Event_ID) {
+      if (strcmp(Volume2, "DetectorLaBr") == 0 && (strcmp(Particles, "gamma") == 0 || strcmp(Particles, "e-") == 0))
+        EnergyDepositFinal = EnergyDepositFinal + Energy_Deposit;
       }
     }
   }

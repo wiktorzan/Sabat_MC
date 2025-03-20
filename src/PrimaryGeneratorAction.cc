@@ -1,6 +1,7 @@
 /// \file PrimaryGeneratorAction.hh
 /// \brief Implementation of the PrimaryGeneratorAction class
 
+#include "PrimaryGeneratorMessenger.hh"
 #include "PrimaryGeneratorAction.hh"
 #include "DetectorConstruction.hh"
 #include "G4ParticleDefinition.hh"
@@ -19,6 +20,7 @@ using namespace CLHEP;
 
 PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction()
 {
+  fPrimGenMess = new PrimaryGeneratorMessenger(this);
   fGun = new G4ParticleGun();
 }
 
@@ -40,8 +42,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 
   if (fShootNeutron) {
     fGun->SetParticleDefinition(G4Neutron::Definition());
-    fGun->SetParticleEnergy(14.1*MeV);
-    fGun->SetParticlePosition(G4ThreeVector(0, -15*cm, 0));
+    fGun->SetParticleEnergy(fNeutronEnergy);
+    fGun->SetParticlePosition(G4ThreeVector(0, fSourcePositionY, 0));
     fGun->SetParticleMomentumDirection(dirNeu);
 
     analysis->FillNtupleDColumn(17, dirNeu.theta()*(180/CLHEP::pi));
@@ -49,15 +51,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fGun->GeneratePrimaryVertex(anEvent);
   }
 
- /* if (fShootAlpha) {
+  if (fShootAlpha) {
     G4ParticleDefinition* myParticle = G4ParticleTable::GetParticleTable()->FindParticle("alpha");
     fGun->SetParticleDefinition(myParticle);
-    fGun->SetParticleEnergy(3.49*MeV);
-    fGun->SetParticlePosition(G4ThreeVector(0, -15*cm, 0));
+    fGun->SetParticleEnergy(fAlphaEnergy);
+    fGun->SetParticlePosition(G4ThreeVector(0, fSourcePositionY, 0));
     fGun->SetParticleMomentumDirection(dirAlpha);
 
     analysis->FillNtupleDColumn(22, dirAlpha.theta()*180/CLHEP::pi);
     analysis->FillNtupleDColumn(23, dirAlpha.phi()*180/CLHEP::pi);
     fGun->GeneratePrimaryVertex(anEvent);
-  }*/
+  }
 }

@@ -44,7 +44,7 @@ RunAction::RunAction()
   analysisManager->CreateNtupleDColumn("Alpha_Phi");
   analysisManager->CreateNtupleDColumn("Veto_Energy_Deposition");
   analysisManager->CreateNtupleDColumn("Veto_Time");
-  analysisManager->CreateNtupleDColumn("Vet_Hit_X");
+  analysisManager->CreateNtupleDColumn("Veto_Hit_X");
   analysisManager->CreateNtupleDColumn("Veto_Hit_Y");
   analysisManager->CreateNtupleDColumn("Veto_Hit_Z");
   analysisManager->CreateNtupleSColumn("Veto_Particles");
