@@ -17,11 +17,11 @@ public:
   ~PrimaryGeneratorAction();
 
   G4ParticleGun* GetParticleGun() {return fGun;}
-  void removeNeutronGen() {fShootNeutron = false;};
-  void removeAlphaGen() {fShootAlpha = false;};
-  void setNeutronEnergy(G4double energy) {fNeutronEnergy = energy;};
-  void setAlphaEnergy(G4double energy) {fAlphaEnergy = energy;};
-  void setSourcePosition(G4double yPosition) {fSourcePositionY = yPosition;};
+  void RemoveNeutronGen() {fShootNeutron = false;};
+  void RemoveAlphaGen() {fShootAlpha = false;};
+  void SetNeutronEnergy(G4double energy) {fNeutronEnergy = energy;};
+  void SetAlphaEnergy(G4double energy) {fAlphaEnergy = energy;};
+  void SetSourcePosition(G4double yPosition) {fSourcePositionY = yPosition;};
 
   void GeneratePrimaries(G4Event* anEvent) override;
 private:

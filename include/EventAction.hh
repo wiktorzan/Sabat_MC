@@ -15,10 +15,11 @@ public:
 
   void BeginOfEventAction(const G4Event* anEvent) override;
   void EndOfEventAction(const G4Event* anEvent) override;
-  
+  void SetAlphaDetectorsFieldsFlag(std::string flag) {fFillAlphaDetectorFields = flag;};
 private:
   G4int fScintillatorId{-1};
   G4int fScintillatorIdVeto{-1};
+  G4String fFillAlphaDetectorFields = "t";
 };
 
 #endif

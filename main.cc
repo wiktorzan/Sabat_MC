@@ -7,6 +7,7 @@
 #include "DetectorConstruction.hh"
 #include "ActionInitialization.hh"
 #include "PhysicsList.hh"
+#include "InitConfig.hh"
 
 #include <unistd.h>
 #include <chrono>
@@ -25,6 +26,14 @@ int main(int argc, char** argv)
   system_clock::time_point now = system_clock::now();
   long seed = (unsigned int)(system_clock::to_time_t(now)) * 677 * ::getpid();
   G4Random::setTheSeed(seed);
+
+  InitConfig* init = InitConfig::getInstance();
+  if (argc > 2) {
+    std::string initFileName = argv[2];
+    init->SetFileName(initFileName);
+  }
+  init->Initialization();
+  init->Read();
 
   G4RunManager* runManager = new G4RunManager;
 

@@ -22,7 +22,9 @@ void ActionInitialization::Build() const
     RunAction* theRunAction = new RunAction();
     SetUserAction(theRunAction);
 
-    SetUserAction(new EventAction());
+    EventAction* theEventAction = new EventAction();
+    theEventAction->SetAlphaDetectorsFieldsFlag(theRunAction->GetFlagForAlphaDetectorFields());
+    SetUserAction(theEventAction);
 
     SetUserAction(new StackingAction(theRunAction));
 

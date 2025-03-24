@@ -73,14 +73,14 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
 void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {   
   if (command == fRemoveNeutronFromGen) {
-    fPrimGen->removeNeutronGen();
+    fPrimGen->RemoveNeutronGen();
   } else if (command == fRemoveAlphaFromGen) {
-    fPrimGen->removeAlphaGen();
+    fPrimGen->RemoveAlphaGen();
   } else if (command == fSetNeutronEnergy) {
-    fPrimGen->setNeutronEnergy(fSetNeutronEnergy->GetNewDoubleValue(newValue));
+    fPrimGen->SetNeutronEnergy(fSetNeutronEnergy->GetNewDoubleValue(newValue));
   } else if (command == fSetAlphaEnergy) {
-    fPrimGen->setAlphaEnergy(fSetAlphaEnergy->GetNewDoubleValue(newValue));
+    fPrimGen->SetAlphaEnergy(fSetAlphaEnergy->GetNewDoubleValue(newValue));
   } else if (command == fSetSourcePosition) {
-    fPrimGen->setNeutronEnergy(fSetSourcePosition->GetNewDoubleValue(newValue));
+    fPrimGen->SetSourcePosition(fSetSourcePosition->GetNewDoubleValue(newValue));
   }
 }

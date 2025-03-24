@@ -1,18 +1,18 @@
 /// \file EventAction.cc
 /// \brief Implementation of the EventAction class
-#include "EventAction.hh"
-#include <G4SDManager.hh>
-#include <G4THitsMap.hh>
-#include <G4SystemOfUnits.hh>
-#include <G4Event.hh>
+#include "G4SystemOfUnits.hh"
 #include "SensitiveHit.hh"
 #include "G4RunManager.hh"
+#include "EventAction.hh"
+#include "G4SDManager.hh"
+#include "InitConfig.hh"
+#include "G4THitsMap.hh"
+#include "G4Event.hh"
 #include "Analysis.hh"
 
 using namespace std;
 
-EventAction::EventAction() :
-    G4UserEventAction()
+EventAction::EventAction() : G4UserEventAction()
 {;}
 
 EventAction::~EventAction()
@@ -100,7 +100,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       G4cout << "////////////////////////////////////////////" << G4endl;
   }
 
-  if (hitsVetoColl) {
+  if (hitsVetoColl && fFillAlphaDetectorFields == "t") {
     int numberHits = hitsVetoColl->entries();
 
     for(int i1=0; i1<numberHits; i1++) {
