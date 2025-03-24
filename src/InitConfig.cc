@@ -20,7 +20,7 @@ InitConfig* InitConfig::getInstance()
 
 void InitConfig::Initialization()
 {
-  variables["filenameAddFrom"] = "none";
+  variables["filenameAddTimeAndSeed"] = "n"; //t-true, everything else false
   variables["includeAlphaDetection"] = "t"; //t - true, everything else false
 }
 

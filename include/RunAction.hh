@@ -17,11 +17,10 @@ public:
 
   void AddSecondary(const G4ParticleDefinition*, G4double energy);
   void AddTrackLength(G4double length);
-  void GetFilenameAddFrom(std::string file) {fOutputAddFile = file;};
-  std::string GetAddition();
   std::string GetFlagForAlphaDetectorFields() {return fIncludeAlphaDetectorFields;};
 private:
-  std::string fOutputAddFile = "";
+  std::string fOutputAddTimeAndSeed = "n";
+  std::string fTimeAndSeed = "";
   std::string fIncludeAlphaDetectorFields = "t";
 };
 

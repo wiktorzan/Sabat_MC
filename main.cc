@@ -9,6 +9,7 @@
 #include "PhysicsList.hh"
 #include "InitConfig.hh"
 
+#include <sstream>
 #include <unistd.h>
 #include <chrono>
 
@@ -27,13 +28,22 @@ int main(int argc, char** argv)
   long seed = (unsigned int)(system_clock::to_time_t(now)) * 677 * ::getpid();
   G4Random::setTheSeed(seed);
 
+  std::time_t tt = std::chrono::system_clock::to_time_t(now);
+  std::tm tm = *std::gmtime(&tt); //GMT (UTC)
+  std::stringstream ss;
+  const std::string& format = "%m%d%H%M%S";
+  ss << std::put_time( &tm, format.c_str() );
+
+  std::string seedAndTime = ss.str() + "_" + std::to_string(seed);
+
   InitConfig* init = InitConfig::getInstance();
+  init->Initialization();
   if (argc > 2) {
     std::string initFileName = argv[2];
     init->SetFileName(initFileName);
+    init->SetTimeAndSeed(seedAndTime);
+    init->Read();
   }
-  init->Initialization();
-  init->Read();
 
   G4RunManager* runManager = new G4RunManager;
 

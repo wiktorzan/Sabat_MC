@@ -38,9 +38,6 @@ RunMessenger::RunMessenger(RunAction* runAct) : G4UImessenger(), fRun(runAct)
 {
   fRunDir = new G4UIdirectory("/sabat/run/");
   fRunDir->SetGuidance("Run list commands");
-
-  fGetNextFilenameAddFrom = new G4UIcmdWithAString("/sabat/run/filenameAddFrom", this);
-  fGetNextFilenameAddFrom->SetGuidance("Obtaining the next addition to the file from the file");
 }
 
 RunMessenger::~RunMessenger()
@@ -52,7 +49,4 @@ RunMessenger::~RunMessenger()
 
 void RunMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {   
-  if (command == fGetNextFilenameAddFrom) {
-    fRun->GetFilenameAddFrom(newValue);
-  }
 }

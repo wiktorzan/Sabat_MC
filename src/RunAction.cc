@@ -17,9 +17,10 @@
 RunAction::RunAction()
 {
   InitConfig* init = InitConfig::getInstance();
- // init->Initialization();
-  //init->Read();
-  fOutputAddFile = init->GetVariable("filenameAddFrom");
+  fOutputAddTimeAndSeed = init->GetVariable("filenameAddTimeAndSeed");
+  if (fOutputAddTimeAndSeed == "t" || fOutputAddTimeAndSeed == "true") {
+    fTimeAndSeed = init->GetTimeAndSeed();
+  }
   fIncludeAlphaDetectorFields = init->GetVariable("includeAlphaDetection");
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
@@ -72,21 +73,11 @@ void RunAction::BeginOfRunAction(const G4Run*)
 {
   auto analysisManager = G4AnalysisManager::Instance();
 
-  std::cout << fOutputAddFile << std::endl;
-  if (fOutputAddFile != "none") {
+  if (fTimeAndSeed != "") {
     std::string oldName = analysisManager->GetFileName();
-
-    std::cout << oldName << std::endl;
-
     int pos = oldName.find_first_of('.');
     oldName = oldName.substr(0, pos);
-
-    std::cout << oldName << std::endl;
-
-    analysisManager->SetFileName(oldName + "_" + GetAddition());
-
-    std::cout << analysisManager->GetFileName() << std::endl;
-    std::cin >> fOutputAddFile;
+    analysisManager->SetFileName(oldName + "_" + fTimeAndSeed + ".root");
   }
 
   analysisManager->OpenFile();
@@ -100,44 +91,4 @@ void RunAction::EndOfRunAction(const G4Run* run)
 void RunAction::AddSecondary(const G4ParticleDefinition* particle, G4double energy)
 {
   return;
-}
-
-std::string RunAction::GetAddition()
-{
-  std::fstream file(fOutputAddFile.c_str());
-  bool fileExist = file.good();
-
-  file.open(fOutputAddFile, std::fstream::in | std::fstream::out | std::fstream::app);
-  int addition = 0;
-
-  if (!fileExist) {
-    file << addition + 1 << std::endl;
-    file.close();
-    return std::to_string(addition);
-  }
-
-  if (file.is_open()) {
-    file.seekg(-1, std::ios_base::end);                // go to one spot before the EOF
-
-    if(file.peek() == '\n') {
-      file.seekg(-1, std::ios_base::cur);
-      int i = file.tellg();
-      for (i; i>0; i--) {
-        if (file.peek() == '\n') {
-          file.get();
-          break;
-        }
-        file.seekg(i, std::ios_base::beg);
-      }
-    }
-
-    std::string lastLine;
-    getline(file, lastLine);
-    std::cout << lastLine << " Check" << std::endl;
-    addition = stoi(lastLine);
-    file << addition + 1 << std::endl;
-    file.close();
-  }
-
-  return std::to_string(addition);
 }

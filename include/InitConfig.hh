@@ -3,7 +3,7 @@
 
 #include <G4SystemOfUnits.hh>
 #include <globals.hh>
-
+#include <chrono>
 #include <vector>
 #include <map>
 
@@ -26,14 +26,19 @@ public:
       return empty;
   };
 
+  void SetTimeAndSeed(std::string seedPlusTime) {fSeedPlusTime = seedPlusTime;}
   void SetFileName(std::string fileName) {initName = fileName;};
   void Initialization();
   void Read();
+
+  std::string GetTimeAndSeed() {return fSeedPlusTime;};
 
 private:
   static InitConfig* fInit;
   std::string initName = "initConfig.dat";
   std::map<G4String, G4String> variables;
+
+  std::string fSeedPlusTime;
 };
 
 #endif
