@@ -162,6 +162,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   C4H8Cl2S->AddElement(Cl, 2);
   C4H8Cl2S->AddElement(S, 1);
 
+  G4Material* TargetMat = SeaWater; //C4H8Cl2S;
+
   G4Material* SiO2 = new G4Material("Silicon_Dioxide", 2.196 *g/cm3, 2);
   SiO2->AddElement(Si, 1);
   SiO2->AddElement(O, 2);
@@ -270,10 +272,10 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 //Veto construction
   //Active area of silicon detector -> 5 - 55 mm (circle radius)
-  G4double vetoDimx = 20*cm;
-  G4double vetoDimY = 2*cm; // 2cm -> max thickness for silicon detectors
-  G4double vetoDimZ = 10*cm;
-  G4ThreeVector vetoShift(0, -12.0*cm, 0.);
+  G4double vetoDimx = 8*cm;
+  G4double vetoDimY = 1*mm; // 2cm -> max thickness for silicon detectors
+  G4double vetoDimZ = 8*cm;
+  G4ThreeVector vetoShift(0, -11.0*cm, 0.);
   G4Box* solidVeto = new G4Box("DetectorSi", 0.5*vetoDimx, 0.5*vetoDimY, 0.5*vetoDimZ);
   G4LogicalVolume* logicVeto = new G4LogicalVolume(solidVeto, VetoMat, "DetectorSi");
   new G4PVPlacement(0, vetoShift, logicVeto, "DetectorSi", logicSubVolume, false, 13, checkOverlaps);
@@ -307,7 +309,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double targetWallSize = 3*mm;
   G4Box* solidTGVolume = new G4Box("TargetVolume", 0.5*targetCoverDimX - targetWallSize, 0.5*targetCoverDimY - targetWallSize,
                                    0.5*targetCoverDimZ - targetWallSize);
-  G4LogicalVolume* logicTGVolume = new G4LogicalVolume(solidTGVolume, SeaWater, "TargetVolume");
+  G4LogicalVolume* logicTGVolume = new G4LogicalVolume(solidTGVolume, TargetMat, "TargetVolume");
   new G4PVPlacement(0, G4ThreeVector(), logicTGVolume, "TargetVolume", logicTGVolumeCover, false, 5, checkOverlaps);
 
   G4VisAttributes* mustardVisAtt = new G4VisAttributes(G4Colour(1.0,1.0,0));
