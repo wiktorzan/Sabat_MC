@@ -30,6 +30,12 @@ foreach(_file ${macros})
     )
 endforeach()
 
+configure_file(
+    initConfig.dat
+    ${PROJECT_BINARY_DIR}/${_file}
+    COPYONLY
+    )
+
 add_executable(Sabat_exe main.cc ${sources} ${headers})
 target_link_libraries(Sabat_exe ${Geant4_LIBRARIES})
 target_link_libraries(Sabat_exe ${cadmesh_LIBRARIES})

@@ -1,49 +1,64 @@
-#include "RunAction.hh"
-#include <G4Gamma.hh>
-#include <G4Electron.hh>
-#include <G4AccumulableManager.hh>
-#include <G4SystemOfUnits.hh>
-#include "Analysis.hh"
-#include "G4RunManager.hh"
 #include "PrimaryGeneratorAction.hh"
-#include <iomanip>
-//#include "HistoManager.hh"
-#include <G4Alpha.hh>
-#include <G4Proton.hh>
-
-//automatic name creation
-#include <chrono>
+#include "G4AccumulableManager.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4RunManager.hh"
+#include "G4Electron.hh"
+#include "InitConfig.hh"
+#include "RunAction.hh"
+#include "Analysis.hh"
+#include "G4Proton.hh"
+#include "G4Gamma.hh"
+#include "G4Alpha.hh"
+#include "iostream"
+#include "iomanip"
+#include "string"
 
 
 RunAction::RunAction()
 {
+  InitConfig* init = InitConfig::getInstance();
+  fOutputAddTimeAndSeed = init->GetVariable("filenameAddTimeAndSeed");
+  if (fOutputAddTimeAndSeed == "t" || fOutputAddTimeAndSeed == "true") {
+    fTimeAndSeed = init->GetTimeAndSeed();
+  }
+  fIncludeAlphaDetectorFields = init->GetVariable("includeAlphaDetection");
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
+
   analysisManager->SetFirstNtupleId(0);
-  analysisManager->CreateNtuple("ekin_time", "Energy and time");
-  analysisManager->CreateNtupleDColumn("EnergyDeposit");
+
+  analysisManager->CreateNtuple("EventTree", "Tracked Events");
+  analysisManager->CreateNtupleDColumn("Energy_Deposition");
   analysisManager->CreateNtupleDColumn("Time");
-  analysisManager->CreateNtupleDColumn("X");
-  analysisManager->CreateNtupleDColumn("Y");
-  analysisManager->CreateNtupleDColumn("Z");
-  analysisManager->CreateNtupleIColumn("count_rate");
-  analysisManager->CreateNtupleIColumn("ParentID");
-  analysisManager->CreateNtupleIColumn("StepID");
+  analysisManager->CreateNtupleDColumn("Hit_X");
+  analysisManager->CreateNtupleDColumn("Hit_Y");
+  analysisManager->CreateNtupleDColumn("Hit_Z");
+  analysisManager->CreateNtupleIColumn("Count_rate");
+  analysisManager->CreateNtupleIColumn("Parent_ID");
+  analysisManager->CreateNtupleIColumn("Step_ID");
   analysisManager->CreateNtupleSColumn("Particles");
   analysisManager->CreateNtupleSColumn("Process");
-  analysisManager->CreateNtupleDColumn("TimeL");
-  analysisManager->CreateNtupleDColumn("KEnergy");
-  analysisManager->CreateNtupleIColumn("volume");
-  analysisManager->CreateNtupleSColumn("volume2");
-  analysisManager->CreateNtupleIColumn("TrackID");
-  analysisManager->CreateNtupleIColumn("EventID");
-  analysisManager->CreateNtupleDColumn("TotalEdepGamma");
-  analysisManager->CreateNtupleDColumn("NeutronTheta");
-  analysisManager->CreateNtupleDColumn("NeutronPhi");
-  analysisManager->CreateNtupleDColumn("AlphaTheta");
-  analysisManager->CreateNtupleDColumn("AlphaPhi");
-  analysisManager->CreateNtupleDColumn("X2");
-  analysisManager->CreateNtupleDColumn("Y2");
-  analysisManager->CreateNtupleDColumn("Z2");
+  analysisManager->CreateNtupleDColumn("Time_L");
+  analysisManager->CreateNtupleDColumn("Kinetic_Energy");
+  analysisManager->CreateNtupleIColumn("Volume");
+  analysisManager->CreateNtupleSColumn("Volume2");
+  analysisManager->CreateNtupleIColumn("Track_ID");
+  analysisManager->CreateNtupleIColumn("Event_ID");
+  analysisManager->CreateNtupleDColumn("Total_Gamma_Energy_Deposition");
+  analysisManager->CreateNtupleDColumn("Neutron_Theta");
+  analysisManager->CreateNtupleDColumn("Neutron_Phi");
+  analysisManager->CreateNtupleDColumn("Hit_X2");
+  analysisManager->CreateNtupleDColumn("Hit_Y2");
+  analysisManager->CreateNtupleDColumn("Hit_Z2");
+  analysisManager->CreateNtupleDColumn("Alpha_Theta");
+  analysisManager->CreateNtupleDColumn("Alpha_Phi");
+  if (fIncludeAlphaDetectorFields == "t") {
+    analysisManager->CreateNtupleDColumn("Veto_Energy_Deposition");
+    analysisManager->CreateNtupleDColumn("Veto_Time");
+    analysisManager->CreateNtupleDColumn("Veto_Hit_X");
+    analysisManager->CreateNtupleDColumn("Veto_Hit_Y");
+    analysisManager->CreateNtupleDColumn("Veto_Hit_Z");
+    analysisManager->CreateNtupleSColumn("Veto_Particles");
+  }
   analysisManager->FinishNtuple();
 }
 
@@ -58,28 +73,14 @@ void RunAction::BeginOfRunAction(const G4Run*)
 {
   auto analysisManager = G4AnalysisManager::Instance();
 
-  //automatic name creation
+  if (fTimeAndSeed != "") {
+    std::string oldName = analysisManager->GetFileName();
+    int pos = oldName.find_first_of('.');
+    oldName = oldName.substr(0, pos);
+    analysisManager->SetFileName(oldName + "_" + fTimeAndSeed + ".root");
+  }
 
-  std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-  std::time_t in_time_t = std::chrono::system_clock::to_time_t(now);
-  std::chrono::milliseconds ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
-
-  std::tm* time_info = std::localtime(&in_time_t);
-  std::ostringstream oss;
-  oss << std::put_time(time_info, "%Y-%m-%d_%H_%M_%S");
-
-  std::string filename = "output_";
-  filename += oss.str();
-  filename += "_";
-  filename += std::to_string(ms.count());
-  filename += ".root";
-  std::string path = "../DATA/" + filename;
-  analysisManager->SetFileName(path); 
-  
-  std::cout << "Filename: " << path << std::endl;
-
-  analysisManager->OpenFile(path);
-
+  analysisManager->OpenFile();
 }
 
 void RunAction::EndOfRunAction(const G4Run* run)

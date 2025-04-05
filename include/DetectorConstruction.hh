@@ -39,10 +39,6 @@ public:
   void SetCADFiletype(std::string type) {
         filetype = type;
   };
-
-  const G4double scinDim_y = 1.9*cm; ///<  X dimension of simulated strip
-  const G4double scinDim_x = 0.6*cm; ///<  Y dimension of simulated strip
-  const G4double scinDim_z = 5.0*cm; ///<  Z dimension of simulated strip  Exact is 3.054 cm
   
 private:
   G4ThreeVector offset;

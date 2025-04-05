@@ -23,36 +23,38 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file NeutronHPMessenger.cc
-/// \brief Implementation of the NeutronHPMessenger class
+/// \file PrimaryGeneratorMessenger.hh
 
-#include "NeutronHPMessenger.hh"
+#ifndef PrimaryGeneratorMessenger_h
+#define PrimaryGeneratorMessenger_h 1
 
-#include "NeutronHPphysics.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
 
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithABool.hh"
+class PrimaryGeneratorAction;
+class G4UIdirectory;
+class G4UIcmdWithABool;
+class G4UIcmdWithoutParameter;
+class G4UIcmdWithADoubleAndUnit;
 
-NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys) : G4UImessenger(), fNeutronPhysics(phys), fPhysDir(0), fThermalCmd(0)
-{ 
-  fPhysDir = new G4UIdirectory("/testhadr/phys/");
-  fPhysDir->SetGuidance("physics list commands");
-   
-  fThermalCmd = new G4UIcmdWithABool("/testhadr/phys/thermalScattering",this);
-  fThermalCmd->SetGuidance("set thermal scattering model");
-  fThermalCmd->SetParameterName("thermal",false);
-  fThermalCmd->AvailableForStates(G4State_PreInit);  
-}
-
-NeutronHPMessenger::~NeutronHPMessenger()
+class PrimaryGeneratorMessenger: public G4UImessenger
 {
-  delete fThermalCmd;
-  delete fPhysDir;
-}
+public:
+  PrimaryGeneratorMessenger(PrimaryGeneratorAction*);
+  ~PrimaryGeneratorMessenger();
+    
+  virtual void SetNewValue(G4UIcommand*, G4String);
+    
+private:
+  PrimaryGeneratorAction* fPrimGen;
 
-void NeutronHPMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{   
-  if (command == fThermalCmd) {
-    fNeutronPhysics->SetThermalPhysics(fThermalCmd->GetNewBoolValue(newValue));
-  }
-}
+  G4UIdirectory* fPrimGenDir;
+  G4UIcmdWithoutParameter* fRemoveNeutronFromGen = nullptr;
+  G4UIcmdWithoutParameter* fRemoveAlphaFromGen = nullptr;
+  G4UIcmdWithADoubleAndUnit* fSetNeutronEnergy = nullptr;
+  G4UIcmdWithADoubleAndUnit* fSetAlphaEnergy = nullptr;
+  G4UIcmdWithADoubleAndUnit* fSetSourcePosition = nullptr;
+};
+
+#endif

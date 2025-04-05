@@ -23,36 +23,35 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file NeutronHPMessenger.cc
-/// \brief Implementation of the NeutronHPMessenger class
+/// \file RunMessenger.hh
 
-#include "NeutronHPMessenger.hh"
+#ifndef RunMessenger_h
+#define RunMessenger_h 1
 
-#include "NeutronHPphysics.hh"
+#include "G4SystemOfUnits.hh"
+#include "G4UImessenger.hh"
+#include "globals.hh"
 
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithABool.hh"
+class RunAction;
+class G4UIdirectory;
+class G4UIcmdWithABool;
+class G4UIcmdWithAString;
+class G4UIcmdWithoutParameter;
 
-NeutronHPMessenger::NeutronHPMessenger(NeutronHPphysics* phys) : G4UImessenger(), fNeutronPhysics(phys), fPhysDir(0), fThermalCmd(0)
-{ 
-  fPhysDir = new G4UIdirectory("/testhadr/phys/");
-  fPhysDir->SetGuidance("physics list commands");
-   
-  fThermalCmd = new G4UIcmdWithABool("/testhadr/phys/thermalScattering",this);
-  fThermalCmd->SetGuidance("set thermal scattering model");
-  fThermalCmd->SetParameterName("thermal",false);
-  fThermalCmd->AvailableForStates(G4State_PreInit);  
-}
-
-NeutronHPMessenger::~NeutronHPMessenger()
+class RunMessenger: public G4UImessenger
 {
-  delete fThermalCmd;
-  delete fPhysDir;
-}
+public:
+  RunMessenger(RunAction*);
+  ~RunMessenger();
+    
+  virtual void SetNewValue(G4UIcommand*, G4String);
+    
+private:
+  RunAction* fRun;
 
-void NeutronHPMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{   
-  if (command == fThermalCmd) {
-    fNeutronPhysics->SetThermalPhysics(fThermalCmd->GetNewBoolValue(newValue));
-  }
-}
+  G4UIdirectory* fRunDir;
+  G4UIcmdWithAString* fGetNextFilenameAddFrom = nullptr;
+  G4UIcmdWithoutParameter* fRemovingAlphaFieldsFromOutput = nullptr;
+};
+
+#endif

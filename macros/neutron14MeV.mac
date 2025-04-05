@@ -1,22 +1,13 @@
-/run/initialize
-#/vis/open OGLSQt # This automatically opens a graphic window.
-/vis/drawVolume
-#/vis/scene/add/trajectories smooth
-#/vis/scene/endOfEventAction accumulate
-#/run/setCutForAGivenParticle e-  7. mm
+/control/verbose 2
+/run/verbose 2
+
+#/sabat/primGen/removeAlpha
+/sabat/primGen/setNeutronEnergy 14.1 MeV
+/sabat/primGen/setAlphaEnergy 3.49 MeV
+/sabat/primGen/setSourcePositionY -15 cm
 
 /analysis/setFileName neutron.root
 
-/control/verbose 2
-/run/verbose 2
-#
-
-#
-/gun/particle neutron
-
-/gun/energy 14.1 MeV
-
-/gun/position 0 -90.5 0 cm
-
+/run/initialize
 /run/printProgress 100
 /run/beamOn 2000
