@@ -431,13 +431,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     new G4PVPlacement(0, loc, AlphaDetLog, "AlphaDetStrips", logicSubVolume, true, j+10, checkOverlaps);       // checking overlaps
   }*/
 
+
+// ____________________________no shield for now___________________________
+
 // Iron shielding
   G4double shieldXLength = 10*cm;
   G4double shieldYLength = 5*cm;
   G4double shieldZLength = 20*cm;
   G4ThreeVector shieldShift(0, -15.0*cm, 24.*cm);
   G4Box* ironShield = new G4Box("Shield", 0.5*shieldXLength, 0.5*shieldYLength, 0.5*shieldZLength);
-  G4LogicalVolume* logicIron = new G4LogicalVolume(ironShield, Iron, "Shield");
+  G4LogicalVolume* logicIron = new G4LogicalVolume(ironShield, Air, "Shield"); //Iron
   new G4PVPlacement(0, shieldShift, logicIron, "Shield", logicSubVolume, false, 11);
 
   G4VisAttributes* ironVisAtt= new G4VisAttributes(G4Colour(1.,1.,0.5));
@@ -451,7 +454,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double capZLength = 4*cm;
   G4ThreeVector capShift(0, -15.0*cm, 36.*cm);
   G4Box* LeadCap = new G4Box("PbShield", 0.5*capXLength, 0.5*capYLength, 0.5*capZLength);
-  G4LogicalVolume* logicLead = new G4LogicalVolume(LeadCap, Lead, "PbShield");
+  G4LogicalVolume* logicLead = new G4LogicalVolume(LeadCap, Air, "PbShield");  //Lead
   new G4PVPlacement(0, capShift, logicLead, "Shield", logicSubVolume, false, 12);
 
   G4VisAttributes* LeadVisAtt= new G4VisAttributes(G4Colour(0.2,1.,0.5));

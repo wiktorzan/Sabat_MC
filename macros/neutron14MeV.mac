@@ -6,8 +6,8 @@
 /sabat/primGen/setAlphaEnergy 3.49 MeV
 /sabat/primGen/setSourcePositionY -15 cm
 
-/analysis/setFileName neutron.root
+/analysis/setFileName noShield.root
 
 /run/initialize
 /run/printProgress 100
-/run/beamOn 2000
+/run/beamOn 1000000

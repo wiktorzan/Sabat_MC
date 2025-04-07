@@ -137,6 +137,9 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       analysis->FillNtupleDColumn(28, position.getZ() / cm);
       analysis->FillNtupleSColumn(29, hit->GetParName());
 
+      //WZ - potrzebne do korelacji
+      analysis->FillNtupleIColumn(15, evnt->GetEventID());
+
       analysis->AddNtupleRow();
     }
   }

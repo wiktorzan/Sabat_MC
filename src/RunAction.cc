@@ -77,7 +77,14 @@ void RunAction::BeginOfRunAction(const G4Run*)
     std::string oldName = analysisManager->GetFileName();
     int pos = oldName.find_first_of('.');
     oldName = oldName.substr(0, pos);
-    analysisManager->SetFileName(oldName + "_" + fTimeAndSeed + ".root");
+    //Change dir to ../Data
+    std::string path = "../DATA/" + oldName + "_" + fTimeAndSeed + ".root";
+    // std::string path = oldName + "_" + fTimeAndSeed + ".root";
+    std::cout << path << std::endl;
+    analysisManager->SetFileName(path);
+  }else
+  {
+    std::cout << "Brak seed+time" << std::endl;
   }
 
   analysisManager->OpenFile();
