@@ -172,7 +172,7 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
     if (Time > 0) {
       histo.FillTimeLaBr(Time);
       if (Event != Event_ID) {
-std::cout << "Time LaBr " << Time << " and Energy " << EnergyDepositFinal << " " << Event_ID << std::endl;
+//std::cout << "Time LaBr " << Time << " and Energy " << EnergyDepositFinal << " " << Event_ID << std::endl;
 //std::cin >> Parent_ID;
         if (EnergyDepositFinal > 0) {
           histo.FillEnergyDeposition(EnergyDepositFinal);
@@ -196,8 +196,8 @@ std::cout << "Time LaBr " << Time << " and Energy " << EnergyDepositFinal << " "
 
       histo.FillTimeVeto(Veto_Time);
       if (EventVeto != Event_ID) {
-std::cout << "Time Veto " << Veto_Time << " and Energy " << EnergyDepositVetoFinal << " " << Event_ID << std::endl;
-std::cin >> Parent_ID;
+//std::cout << "Time Veto " << Veto_Time << " and Energy " << EnergyDepositVetoFinal << " " << Event_ID << std::endl;
+//std::cin >> Parent_ID;
         if (EnergyDepositVetoFinal > 0) {
           histo.FillEnergyDepositionVeto(EnergyDepositVetoFinal/100);
         }
