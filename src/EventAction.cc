@@ -129,6 +129,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       double energy_step=0.;
       energy_step = hit->GetDeltaEnergy()/MeV;
 
+      analysis->FillNtupleIColumn(15, evnt->GetEventID());
       analysis->FillNtupleDColumn(24, energy_step);
       analysis->FillNtupleDColumn(25, hit->GetTime() / us);
       G4ThreeVector position = hit->GetPosition();
