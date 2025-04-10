@@ -2,8 +2,8 @@
 #include "G4AccumulableManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
+#include "RunMessenger.hh"
 #include "G4Electron.hh"
-#include "InitConfig.hh"
 #include "RunAction.hh"
 #include "Analysis.hh"
 #include "G4Proton.hh"
@@ -16,12 +16,8 @@
 
 RunAction::RunAction()
 {
-  InitConfig* init = InitConfig::getInstance();
-  fOutputAddTimeAndSeed = init->GetVariable("filenameAddTimeAndSeed");
-  if (fOutputAddTimeAndSeed == "t" || fOutputAddTimeAndSeed == "true") {
-    fTimeAndSeed = init->GetTimeAndSeed();
-  }
-  fIncludeAlphaDetectorFields = init->GetVariable("includeAlphaDetection");
+  fRunMess = new RunMessenger(this);
+
   G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
   analysisManager->SetFirstNtupleId(0);
@@ -73,13 +69,12 @@ void RunAction::BeginOfRunAction(const G4Run*)
 {
   auto analysisManager = G4AnalysisManager::Instance();
 
-  if (fTimeAndSeed != "") {
+  if (fOutputAddTimeAndSeed == "t") {
     std::string oldName = analysisManager->GetFileName();
     int pos = oldName.find_first_of('.');
     oldName = oldName.substr(0, pos);
     analysisManager->SetFileName(oldName + "_" + fTimeAndSeed + ".root");
   }
-
   analysisManager->OpenFile();
 }
 

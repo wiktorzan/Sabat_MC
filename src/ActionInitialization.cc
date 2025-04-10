@@ -20,6 +20,7 @@ void ActionInitialization::Build() const
     SetUserAction(new PrimaryGeneratorAction());
 
     RunAction* theRunAction = new RunAction();
+    theRunAction->SetTimeAndSeed(timeAndSeedAdd);
     SetUserAction(theRunAction);
 
     EventAction* theEventAction = new EventAction();

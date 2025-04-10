@@ -2,6 +2,7 @@
 /// \brief Implementation of the DetectorConstruction class
 
 #include "DetectorConstruction.hh"
+#include "DetectorMessenger.hh"
 #include "G4NistManager.hh"
 #include "G4RotationMatrix.hh"
 #include "G4LogicalVolume.hh"
@@ -31,7 +32,9 @@
 #include <sstream>
 
 DetectorConstruction::DetectorConstruction() : G4VUserDetectorConstruction()
-{;}
+{
+  fDetMess = new DetectorMessenger(this);
+}
 
 DetectorConstruction::~DetectorConstruction()
 {;}
@@ -50,7 +53,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4Element* Ce = man->FindOrBuildElement("Ce");
 
   G4Material* Silicon = new G4Material("Silicon", 14., 28.0855*g/mole, 2.33*g/cm3);
-  G4Material* VetoMat = Silicon; //man->FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  G4Material* VetoMat = Silicon;
 
   G4Element* H  = man->FindOrBuildElement("H");
   G4Element* B  = man->FindOrBuildElement("B");
@@ -118,12 +121,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   pressure    = 98658.96*pascal;
   temperature = 273*kelvin;
 
-  G4Material* Air = new G4Material("Air", density, ncomponents=2, kStateGas, temperature, pressure);
-  Air->AddElement(N, 79.*perCent);
-  Air->AddElement(O, 21.*perCent);
+  G4Element* Ar = man->FindOrBuildElement("Ar");
+
+  G4Material* Air = new G4Material("Air", density, ncomponents=4, kStateGas, temperature, pressure);
+  Air->AddElement(N, 75.53*perCent);
+  Air->AddElement(O, 23.18*perCent);
+  Air->AddElement(Ar, 1.28*perCent);
+  Air->AddElement(C, 0.01*perCent);
 
   G4NistManager *nist_man = G4NistManager::Instance();
-  G4Material *AIR_mat = nist_man->FindOrBuildMaterial("Air");
+  G4Material *AIR_mat = nist_man->FindOrBuildMaterial("G4_AIR");
 
   G4Material* H2O = new G4Material("Water", 1.000*g/cm3, 2);
   H2O->AddElement(H, 2);
@@ -162,7 +169,23 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   C4H8Cl2S->AddElement(Cl, 2);
   C4H8Cl2S->AddElement(S, 1);
 
-  G4Material* TargetMat = SeaWater; //C4H8Cl2S;
+  G4Material* TNT = new G4Material("TNT", 1.654*g/cm3, 4);
+  TNT->AddElement(O, 42.26*perCent);
+  TNT->AddElement(C, 37.02*perCent);
+  TNT->AddElement(N, 18.50*perCent);
+  TNT->AddElement(H, 2.22*perCent);
+
+  G4Material* Clark1 = new G4Material("Clark1", 1.422*g/cm3, 4);
+  Clark1->AddElement(C, 12);
+  Clark1->AddElement(H, 10);
+  Clark1->AddElement(As, 1);
+  Clark1->AddElement(Cl, 1);
+
+  G4Material* Clark2 = new G4Material("Clark2", 1.45*g/cm3, 4);
+  Clark2->AddElement(C, 13);
+  Clark2->AddElement(H, 10);
+  Clark2->AddElement(As, 1);
+  Clark2->AddElement(N, 1);
 
   G4Material* SiO2 = new G4Material("Silicon_Dioxide", 2.196 *g/cm3, 2);
   SiO2->AddElement(Si, 1);
@@ -194,9 +217,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   Low_Carbon_Steel->AddMaterial(Carbon, 0.25*perCent);
 
   G4Material* LCSt = man->FindOrBuildMaterial("Low_Carbon_Steel");
-  G4Material* MGas = man->FindOrBuildMaterial("Mustard_Gas");
-  G4Material* SandB= man->FindOrBuildMaterial("Silicon_Dioxide");
-  G4Material* DetM = man->FindOrBuildMaterial("LaBr3");
+
+  G4Material* TargetMat = SeaWater;
+
+  switch (targetType) {
+    case TargetVariables::fWater:
+      TargetMat = SeaWater;
+      break;
+    case TargetVariables::fMustardGas:
+      TargetMat = C4H8Cl2S;
+      break;
+    case TargetVariables::fTNT:
+      TargetMat = TNT;
+      break;
+    case TargetVariables::fClark1:
+      TargetMat = Clark1;
+      break;
+    case TargetVariables::fClark2:
+      TargetMat = Clark2;
+      break;
+  }
 
 //**************************
   G4RotationMatrix* rotationTarget = new G4RotationMatrix();
@@ -231,9 +271,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
 //rotation for gamma guide
   G4RotationMatrix* rotation6 = new G4RotationMatrix();
-  //rotation6->rotateY(130.*deg);
   rotation6->rotateX(120.*deg);
-//  rotation6->rotateZ(-40.*deg);
 
 //-------------------------
 
@@ -261,7 +299,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double submarineWallSize = 3*mm;
   G4Box* solidSubVolume = new G4Box("SubVolume",0.5*submarineDimX - submarineWallSize,
                                     0.5*submarineDimY - submarineWallSize, 0.5*submarineDimZ - submarineWallSize);
-  G4LogicalVolume* logicSubVolume = new G4LogicalVolume(solidSubVolume, vacuum,"SubVolume");
+  G4LogicalVolume* logicSubVolume = new G4LogicalVolume(solidSubVolume, vacuum, "SubVolume");
   new G4PVPlacement(0, G4ThreeVector(0.,0.,0.), logicSubVolume, "SubVolume", logicSubmarineVolume, false, 2, checkOverlaps);
 
   G4VisAttributes* subbMarVisAtt2 = new G4VisAttributes(G4Color(1.0,0.,0.5));
@@ -399,37 +437,20 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   logicSANDVolume->SetVisAttributes(sandVisAtt);
 
 // Source boarder for presen.
-/*  G4double pRmin = 0.*cm;
+  G4double pRmin = 0.*cm;
   G4double pRmax = 2.5*cm;
   G4double pSPhi = 0*deg;
-  G4double pDPhi = 2*Pi;
+  G4double pDPhi = 2*M_PI;
   G4double pSTheta = 0*deg;
-  G4double pDTheta = Pi;
+  G4double pDTheta = M_PI;
 
   G4Sphere* solidShape1 = new G4Sphere("SOURCE", pRmin, pRmax, pSPhi, pDPhi, pSTheta, pDTheta);
-  G4LogicalVolume* logicShape1 = new G4LogicalVolume(solidShape1, AIR_mat, "SOURCE");
+  G4LogicalVolume* logicShape1 = new G4LogicalVolume(solidShape1, vacuum, "SOURCE");
   new G4PVPlacement(0, G4ThreeVector(0, -15*cm,0), logicShape1, "SOURCE", logicSubVolume, false, 10);
       
   G4VisAttributes * sourceVisAtt = new G4VisAttributes(G4Colour(1.,1.,0.));
   sourceVisAtt->SetForceWireframe(true);
-  logicShape1->SetVisAttributes(sourceVisAtt);*/
-
-// make plastic scintillators as alpha particle tagging -
-/*  G4double scinDim_y = 1.9*cm;
-  G4double scinDim_x = 0.6*cm;
-  G4double scinDim_z = 5.0*cm;
-  G4Box* AlphaDet = new G4Box("AlphaDetStrips", 0.5*scinDim_x, 0.5*scinDim_y, 0.5*scinDim_z);
-  G4LogicalVolume* AlphaDetLog = new G4LogicalVolume(AlphaDet, VetoMat, "AlphaDetStrips");
-
-  G4VisAttributes* BoxVisAtt =  new G4VisAttributes(G4Colour(1.,0.4,.9));
-  BoxVisAtt->SetForceWireframe(true);
-  BoxVisAtt->SetForceSolid(true);
-  AlphaDetLog->SetVisAttributes(BoxVisAtt);
-
-  for(int j=0; j<7; j++) {
-    G4ThreeVector loc = G4ThreeVector(-2.1*cm + j*0.7*cm, -12.*cm, 0.0);
-    new G4PVPlacement(0, loc, AlphaDetLog, "AlphaDetStrips", logicSubVolume, true, j+10, checkOverlaps);       // checking overlaps
-  }*/
+  logicShape1->SetVisAttributes(sourceVisAtt);
 
 // Iron shielding
   G4double shieldXLength = 10*cm;
