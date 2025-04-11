@@ -293,26 +293,26 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   new G4PVPlacement(rotationNeutronGuide, neuSourceShift, logicSourceGuide, "SourceGuide", logicWorld, false, 3, checkOverlaps);
   
   //outer steel cap of neutron guide
-  G4double neuSourceGuideCapDimZ = 0.5*cm;
-  G4ThreeVector neuSourceCapShift(0.,-(neuSourceGuideCapDimZ)/2,0);
+  G4double neuSourceGuideCapDimZ = 0.2*cm;
+  G4ThreeVector neuSourceCapShift = neuSourceShift + G4ThreeVector(0.,neuSourceGuideCapDimZ - neuSourceGuideDimZ,0); 
 
   G4VSolid* solidSourceGuideOuterCap = new G4Tubs("SourceGuideOuterCap", 0, neuSourceGuideInnerRadius, neuSourceGuideCapDimZ, 0., 2*M_PI*rad);
   G4LogicalVolume* logicSourceGuideOuterCap = new G4LogicalVolume(solidSourceGuideOuterCap, LCSt, "SourceGuideOuterCap");
-  new G4PVPlacement(rotationNeutronGuide, G4ThreeVector(0.,(-25-5+0.5)*cm,0.), logicSourceGuideOuterCap, "SourceGuideOuterCap", logicWorld, false, 14, checkOverlaps);
-
+  new G4PVPlacement(rotationNeutronGuide,neuSourceCapShift , logicSourceGuideOuterCap, "SourceGuideOuterCap", logicWorld, false, 14, checkOverlaps);
   
   //inside of neutron guide filled with air
   G4double neuSourceGuideInsDimZ = neuSourceGuideDimZ - neuSourceGuideCapDimZ;
-  G4ThreeVector neuSourceInsShift(0.,neuSourceGuideCapDimZ,0);
+  G4ThreeVector neuSourceInsShift = neuSourceShift + G4ThreeVector(0.,neuSourceGuideCapDimZ,0);
 
   G4VSolid* solidSourceGuideIns = new G4Tubs("SourceGuideIns", 0, neuSourceGuideInnerRadius, neuSourceGuideInsDimZ, 0., 2*M_PI*rad);
   G4LogicalVolume* logicSourceGuideIns = new G4LogicalVolume(solidSourceGuideIns, Air, "SourceGuideIns");
-  new G4PVPlacement(rotationNeutronGuide, neuSourceShift+neuSourceInsShift, logicSourceGuideIns, "SourceGuideIns", logicWorld, false, 15, checkOverlaps);
+  new G4PVPlacement(rotationNeutronGuide, neuSourceInsShift, logicSourceGuideIns, "SourceGuideIns", logicWorld, false, 15, checkOverlaps);
   
 
   G4VisAttributes* sourceGVisAtt= new G4VisAttributes(G4Colour(1.0,0.0,1.0));
   sourceGVisAtt->SetForceSolid(true);
   logicSourceGuide->SetVisAttributes(sourceGVisAtt);
+
 
 
 //Target
@@ -350,7 +350,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 // half length X of the side at +half length Y of the face at +half length Z
 // angle with respect to the y axis from the centre of the upper endcap
 
-  G4double particleGuideZHalfLength = 4.5*cm;
+G4double particleGuideCapDimZ = 0.2*cm;
+
+  G4double particleGuideZHalfLength = 5*cm - particleGuideCapDimZ;
   G4double particleGuideTheta = 69*deg;
   G4double particleGuidePhi = 90*deg;
   G4double particleGuideYHalfLengthAtMinusY = 10*cm;
@@ -362,7 +364,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   G4double particleGuideAlphaLowerEndcap = 0*deg;
   G4double particleGuideAlphaUpperEndcap = 0*deg;
   G4double particleGuideWallSize = 3*mm;
-  G4ThreeVector particleGuideShift(0.*cm, -25*cm + 0.5*cm, 33.5*cm);
+  G4ThreeVector particleGuideShift(0.*cm, -25*cm + particleGuideCapDimZ, 33.5*cm); //+ 0.5*cm
   G4Trap* solidParticleGuideOuterCov = new G4Trap("ParticleGuideOuterCov", particleGuideZHalfLength, particleGuideTheta,
                                                   particleGuidePhi, particleGuideYHalfLengthAtMinusY + particleGuideWallSize,
                                                   particleGuideXHalfLengthAtMinusYMinusZ + particleGuideWallSize,
@@ -390,11 +392,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
                     false, 7, checkOverlaps);
 
   //Particle guide cap
-  G4double particleGuideCapDimZ = 0.3*cm;
+  
+  //G4ThreeVector particleGuideCapShift(0., -25*cm + 0.2*cm - particleGuideZHalfLength, 33.5*cm -2.5*cm - 2*particleGuideZHalfLength);
+  G4ThreeVector particleGuideCapShift = particleGuideShift + G4ThreeVector(0., -particleGuideZHalfLength - particleGuideCapDimZ, -2.5*particleGuideZHalfLength -5*mm);
 
   G4VSolid* solidParticleGuideCap = new G4Box("ParticleGuideCap", particleGuideYHalfLengthAtPlusY, particleGuideYHalfLengthAtPlusY, particleGuideCapDimZ);
   G4LogicalVolume* logicParticleGuideCap = new G4LogicalVolume(solidParticleGuideCap, LCSt, "ParticleGuideCap");
-  G4ThreeVector particleGuideCapShift(0., -25*cm + 0.2*cm - particleGuideZHalfLength, 33.5*cm -2.5*cm - 2*particleGuideZHalfLength);
+  
 
   new G4PVPlacement(rotationParticleGuide, particleGuideCapShift, logicParticleGuideCap, "ParticleGuideCap", logicWorld,
                     false, 16, checkOverlaps);
