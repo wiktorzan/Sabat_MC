@@ -23,44 +23,46 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file PrimaryGeneratorMessenger.cc
+/// \file DetectorMessenger.cc
 
 
 #include "G4UIcmdWithoutParameter.hh"
 #include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithABool.hh"
 #include "G4UIdirectory.hh"
-#include "RunMessenger.hh"
-#include "RunAction.hh"
+#include "DetectorMessenger.hh"
+#include "DetectorConstruction.hh"
 
 
-RunMessenger::RunMessenger(RunAction* runAct) : G4UImessenger(), fRun(runAct)
+DetectorMessenger::DetectorMessenger(DetectorConstruction* detCons) : G4UImessenger(), fDet(detCons)
 {
-  fRunDir = new G4UIdirectory("/sabat/run/");
-  fRunDir->SetGuidance("Run list commands");
+  fDetDir = new G4UIdirectory("/sabat/det/");
+  fDetDir->SetGuidance("Detector list commands");
 
-  fAddTimeAndSeedToFilename = new G4UIcmdWithAString("/sabat/run/addTimeAndSeedToFilename", this);
-  fAddTimeAndSeedToFilename->SetGuidance("Option to add time and seed to the filename of the output - t if true");
-
-  fRemovingAlphaFieldsFromOutput = new G4UIcmdWithAString("/sabat/run/removeAlphaFromOutput", this);
-  fRemovingAlphaFieldsFromOutput->SetGuidance("Option to remove alpha fields from the output - t if true");
+  fSetTargetMaterial = new G4UIcmdWithAString("/sabat/det/changeTargetMaterial", this);
+  fSetTargetMaterial->SetGuidance("Option to change material of the target - Water, MustardGas, TNT, Clark1, Clark2");
 }
 
-RunMessenger::~RunMessenger()
+DetectorMessenger::~DetectorMessenger()
 {
-  delete fRunDir;
-  delete fAddTimeAndSeedToFileName;
-  delete fAddTimeAndSeedToFilename;
-  delete fRemovingAlphaFieldsFromOutput;
+  delete fDetDir;
+  delete fSetTargetMaterial;
 }
 
-void RunMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
+void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 {
-  if (command == fAddTimeAndSeedToFilename) {
-    if (newValue == "True" || newValue == "true" || newValue == "T" || newValue == "t")
-      fRun->AddTimeAndSeed();
-  } else if (command == fRemovingAlphaFieldsFromOutput) {
-    if (newValue == "True" || newValue == "true" || newValue == "T" || newValue == "t")
-      fRun->RemoveAlphaGen();
+  if (command == fSetTargetMaterial) {
+    if (newValue == "Water" || newValue == "water" || newValue == "W" || newValue == "w") {
+      fDet->SetTarget(TargetVariables::fWater);
+    } else if (newValue == "Mustard" || newValue == "mustard" ||newValue == "MustardGas" || newValue == "mustardgas" ||
+               newValue == "M" || newValue == "m" || newValue == "MG" || newValue == "mg") {
+      fDet->SetTarget(TargetVariables::fMustardGas);
+    } else if (newValue == "TNT" || newValue == "tnt" ||newValue == "T" || newValue == "t") {
+      fDet->SetTarget(TargetVariables::fTNT);
+    } else if (newValue == "Clark1" || newValue == "clark1" ||newValue == "C1" || newValue == "c1") {
+      fDet->SetTarget(TargetVariables::fClark1);
+    } else if (newValue == "Clark2" || newValue == "clark2" ||newValue == "C2" || newValue == "c2") {
+      fDet->SetTarget(TargetVariables::fClark2);
+    }
   }
 }

@@ -5,6 +5,7 @@
 #define ACTION_INITIALIZATION_HH
 
 #include <G4VUserActionInitialization.hh>
+#include <string>
 
 /// Action initialization class.
 ///
@@ -22,7 +23,11 @@ public:
   void Build() const override;
 
   ///Registers User Actions for the master (only Run Action)
-  void BuildForMaster() const override;   
+  void BuildForMaster() const override;
+
+  void SetTimeAndSeedAdd(std::string add) {timeAndSeedAdd = add;};
+private:
+  std::string timeAndSeedAdd = "";
 };
 
 #endif

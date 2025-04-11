@@ -96,30 +96,30 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     if (totEdep > 0)
       analysis->FillNtupleDColumn(16, totEdep);
 
+    if (hitsVetoColl && fFillAlphaDetectorFields == "t") {
+      int numberHits = hitsVetoColl->entries();
+
+      for(int i1=0; i1<numberHits; i1++) {
+        auto hit = (*hitsVetoColl)[i1];
+        G4String processCheck = hit->GetPrcName();
+
+        double energy_step=0.;
+        energy_step = hit->GetDeltaEnergy()/MeV;
+
+        analysis->FillNtupleIColumn(15, evnt->GetEventID());
+        analysis->FillNtupleDColumn(24, energy_step);
+        analysis->FillNtupleDColumn(25, hit->GetTime() / us);
+        G4ThreeVector position = hit->GetPosition();
+        analysis->FillNtupleDColumn(26, position.getX() / cm);
+        analysis->FillNtupleDColumn(27, position.getY() / cm);
+        analysis->FillNtupleDColumn(28, position.getZ() / cm);
+        analysis->FillNtupleSColumn(29, hit->GetParName());
+
+        analysis->AddNtupleRow();
+      }
+    }
+
     if (tempEvent == evnt->GetEventID())
       G4cout << "////////////////////////////////////////////" << G4endl;
-  }
-
-  if (hitsVetoColl && fFillAlphaDetectorFields == "t") {
-    int numberHits = hitsVetoColl->entries();
-
-    for(int i1=0; i1<numberHits; i1++) {
-      auto hit = (*hitsVetoColl)[i1];
-      G4String processCheck = hit->GetPrcName();
-
-      double energy_step=0.;
-      energy_step = hit->GetDeltaEnergy()/MeV;
-
-      analysis->FillNtupleIColumn(15, evnt->GetEventID());
-      analysis->FillNtupleDColumn(24, energy_step);
-      analysis->FillNtupleDColumn(25, hit->GetTime() / us);
-      G4ThreeVector position = hit->GetPosition();
-      analysis->FillNtupleDColumn(26, position.getX() / cm);
-      analysis->FillNtupleDColumn(27, position.getY() / cm);
-      analysis->FillNtupleDColumn(28, position.getZ() / cm);
-      analysis->FillNtupleSColumn(29, hit->GetParName());
-
-      analysis->AddNtupleRow();
-    }
   }
 }

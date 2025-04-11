@@ -71,7 +71,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
 }
 
 void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{   
+{
   if (command == fRemoveNeutronFromGen) {
     fPrimGen->RemoveNeutronGen();
   } else if (command == fRemoveAlphaFromGen) {

@@ -23,36 +23,34 @@
 // * acceptance of all terms of the Geant4 Software license.          *
 // ********************************************************************
 //
-/// \file RunMessenger.hh
+/// \file DetectorMessenger.hh
 
-#ifndef RunMessenger_h
-#define RunMessenger_h 1
+#ifndef DetectorMessenger_h
+#define DetectorMessenger_h 1
 
 #include "G4SystemOfUnits.hh"
 #include "G4UImessenger.hh"
 #include "globals.hh"
 
-class RunAction;
+class DetectorConstruction;
 class G4UIdirectory;
 class G4UIcmdWithABool;
 class G4UIcmdWithAString;
 class G4UIcmdWithoutParameter;
 
-class RunMessenger: public G4UImessenger
+class DetectorMessenger: public G4UImessenger
 {
 public:
-  RunMessenger(RunAction*);
-  ~RunMessenger();
+  DetectorMessenger(DetectorConstruction*);
+  ~DetectorMessenger();
     
   virtual void SetNewValue(G4UIcommand*, G4String);
     
 private:
-  RunAction* fRun;
+  DetectorConstruction* fDet;
 
-  G4UIdirectory* fRunDir;
-  G4UIcmdWithAString* fAddTimeAndSeedToFileName = nullptr;
-  G4UIcmdWithAString* fAddTimeAndSeedToFilename = nullptr;
-  G4UIcmdWithAString* fRemovingAlphaFieldsFromOutput = nullptr;
+  G4UIdirectory* fDetDir;
+  G4UIcmdWithAString* fSetTargetMaterial = nullptr;
 };
 
 #endif
