@@ -58,6 +58,7 @@ int main(int argc, char* argv[])
   HistCollection hist;
   hist.CreateEnergyHistos(minEnergy, maxEnergy, binSize);
   hist.CreateTimingHistos(minTime, timeSeparator, maxTime, binSizeSmall, binSizeLarge);
+  hist.CreateEnergyVsTimingHistos(minEnergy, maxEnergy, binSize, minTime, maxTime, binSizeLarge);
   TString outputName = "";
 //--------------------------------------------------------
 //Analysis
@@ -85,7 +86,7 @@ int main(int argc, char* argv[])
       std::string dirName;
       if (slashPlace > 0) {
         dirName = fileOrPattern.substr(0, slashPlace+1);
-        pattern = fileOrPattern.substr(slashPlace+1, starPlace);
+        pattern = fileOrPattern.substr(slashPlace+1, starPlace-slashPlace-1);
       }
       else {
         dirName = "";
@@ -135,7 +136,7 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
   TTree *ntuple = (TTree *) hfile->Get("EventTree");
   Double_t Energy_Deposit, Neutron_Theta, Neutron_Phi, Time, Hit_X, Hit_Y, Hit_Z;
   Double_t Veto_Energy_Deposit, Veto_Time, Veto_Hit_X, Veto_Hit_Y ,Veto_Hit_Z;
-  Int_t Event, EventVeto, Parent_ID;
+  Int_t CurrentEvent, EventVeto, Parent_ID;
   Char_t Particles[6], Veto_Particles[6], Process[22];
   Int_t Volume;
   Char_t Volume2[13];
@@ -163,49 +164,56 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
   Int_t nentries = (Int_t)ntuple->GetEntries();
 
   Double_t EnergyDepositFinal = 0, EnergyDepositVetoFinal = 0;
-  Double_t FirstTime, FirstTimeVeto;
+  Double_t FirstTime = 0, FirstTimeVeto = 0;
+  CurrentEvent = -1;
   for (Int_t i=0; i<nentries; i++) {
     ntuple->GetEntry(i);
 
- //   std::cout << i << " " << Event_ID << std::endl;
-
-    if (Time > 0) {
-      histo.FillTimeLaBr(Time);
-      if (Event != Event_ID) {
-//std::cout << "Time LaBr " << Time << " and Energy " << EnergyDepositFinal << " " << Event_ID << std::endl;
-//std::cin >> Parent_ID;
-        if (EnergyDepositFinal > 0) {
-          histo.FillEnergyDeposition(EnergyDepositFinal);
-          histo.FillEnergyDepositionSmeared(EnergyDepositFinal + SmearEnergy(EnergyDepositFinal));
-
-          if (Veto_Time > 0) {
-            histo.FillTimeDifference(FirstTimeVeto - FirstTime);
+    if (Event_ID > CurrentEvent) {
+      CurrentEvent = Event_ID;
+      if (FirstTime > 0 && FirstTimeVeto > 0) {
+        histo.FillTimeDifference(FirstTime - FirstTimeVeto);
+      }
+      if (EnergyDepositFinal > 0) {
+        histo.FillEnergyDeposition(EnergyDepositFinal);
+        double eneSmeared = EnergyDepositFinal + SmearEnergy(EnergyDepositFinal);
+        histo.FillEnergyDepositionSmeared(eneSmeared);
+        if (EnergyDepositVetoFinal > 0) {
+          histo.FillEnergyDepositionWithVeto(EnergyDepositFinal);
+          histo.FillEnergyDepositionWithVetoSmeared(eneSmeared);
+          if (FirstTime > 0 && FirstTimeVeto > 0) {
+            histo.FillEnergyDepositionVsTimeDiff(EnergyDepositFinal, FirstTime - FirstTimeVeto);
+            histo.FillEnergyDepositionVsTimeDiffSmeared(eneSmeared, FirstTime - FirstTimeVeto);
           }
         }
+      }
+      if (EnergyDepositVetoFinal > 0) {
+        histo.FillEnergyDepositionVeto(EnergyDepositVetoFinal);
+      }
 
-        FirstTime = Time;
-        EnergyDepositFinal = 0;
-        Event = Event_ID;
-      } else {
+      FirstTime = 0;
+      FirstTimeVeto = 0;
+      EnergyDepositFinal = 0;
+      EnergyDepositVetoFinal = 0;
+    }
+
+    if (Event_ID == CurrentEvent) {
+      if (Time > 0) {
+        histo.FillTimeLaBr(Time);
+
+        if (FirstTime == 0)
+          FirstTime = Time;
+
         if (strcmp(Volume2, "DetectorLaBr") == 0 && (strcmp(Particles, "gamma") == 0 || strcmp(Particles, "e-") == 0))
           EnergyDepositFinal = EnergyDepositFinal + Energy_Deposit;
       }
-    }
 
-    if (Veto_Time > 0) {
+      if (Veto_Time > 0) {
+        histo.FillTimeVeto(Veto_Time);
 
-      histo.FillTimeVeto(Veto_Time);
-      if (EventVeto != Event_ID) {
-//std::cout << "Time Veto " << Veto_Time << " and Energy " << EnergyDepositVetoFinal << " " << Event_ID << std::endl;
-//std::cin >> Parent_ID;
-        if (EnergyDepositVetoFinal > 0) {
-          histo.FillEnergyDepositionVeto(EnergyDepositVetoFinal/100);
-        }
+        if (FirstTimeVeto == 0)
+          FirstTimeVeto = Veto_Time;
 
-        FirstTimeVeto = Veto_Time;
-        EnergyDepositVetoFinal = 0;
-        EventVeto = Event_ID;
-      } else {
         if ((strcmp(Veto_Particles, "alpha") == 0 || strcmp(Veto_Particles, "e-") == 0))
           EnergyDepositVetoFinal = EnergyDepositVetoFinal + Veto_Energy_Deposit;
       }
