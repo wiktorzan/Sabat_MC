@@ -53,7 +53,7 @@ public:
     EnergyDepositionVsTimeDiff = new TH2D("EnergyDepositionVsTimeDiff","Energy Deposition; Energy [MeV]; Time [us]", (maxEnergy - minEnergy)/eneBinSize,
                                           minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize, (maxTime - minTime)/timeBinSize,
                                           minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
-    EnergyDepositionVsTimeDiffSmeared = new TH2D("EnergyDepositionWithVetoSmeared","Energy Deposition Smeared; Energy [MeV]; Time [us]",
+    EnergyDepositionVsTimeDiffSmeared = new TH2D("EnergyDepositionWithVetoSmearedVsTimeDiff","Energy Deposition Smeared; Energy [MeV]; Time [us]",
                                                  (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
                                                  (maxTime - minTime)/timeBinSize, minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
   }
