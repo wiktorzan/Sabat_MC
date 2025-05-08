@@ -78,6 +78,7 @@ public:
 
   void SaveHistos(TString output)
   {
+    std::cout << "Saving histos to " << output << std::endl;
     TFile* outfile = new TFile(output, "RECREATE");
     outfile->cd();
     EnergyDeposition->Write("EnergyDeposition");

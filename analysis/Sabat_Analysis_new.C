@@ -65,12 +65,21 @@ int main(int argc, char* argv[])
   std::vector<std::string> filesToAnalyze;
 
   if (argc > 2) {
-    outputName = "Out_LastFile_" + fileOrPattern;
     filesToAnalyze.push_back(fileOrPattern);
     for (unsigned i=2; i<argc; i++) {
       fileOrPattern = argv[i];
       filesToAnalyze.push_back(fileOrPattern);
     }
+    TString slash = "/";
+    std::size_t slashPlace = fileOrPattern.rfind(slash);
+    std::string pattern = fileOrPattern;
+    std::string dirName = "";
+    if (slashPlace > 0) {
+      dirName = fileOrPattern.substr(0, slashPlace+1);
+      pattern = fileOrPattern.substr(slashPlace+1, fileOrPattern.length());
+    }
+    outputName = dirName + "Out_LastFile_" + pattern;
+
     for (unsigned fileNo = 0; fileNo < filesToAnalyze.size(); fileNo++) {
       AnalyzeFile(filesToAnalyze.at(fileNo), hist);
     }
