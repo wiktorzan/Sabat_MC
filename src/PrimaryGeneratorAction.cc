@@ -33,10 +33,18 @@ PrimaryGeneratorAction::~PrimaryGeneratorAction()
 void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 {
   G4ThreeVector dirAlp;
-  G4double cosTheta = 1. - 2*G4UniformRand(), Phi = CLHEP::twopi*G4UniformRand();
+
+  G4double cosTheta =2;
+  while(cosTheta  > -0.70){
+    cosTheta = 1. - 2*G4UniformRand();
+  }
+  
+
+  //W poprzedniej wersji stozek o kacie rozwarcia 2 theta byl wokol osi Z, teraz jest pionowo (wokol osi Y)
+  G4double Phi = CLHEP::twopi*G4UniformRand();
   G4double sinTheta = sqrt(1. - cosTheta*cosTheta);
-  G4ThreeVector dirNeu(sinTheta * cos(Phi), sinTheta * sin(Phi), cosTheta);
-  G4ThreeVector dirAlpha(-1*sinTheta * cos(Phi), -1*sinTheta * sin(Phi), -1*cosTheta);
+  G4ThreeVector dirNeu(sinTheta * cos(Phi), cosTheta, sinTheta * sin(Phi));
+  G4ThreeVector dirAlpha(-1*sinTheta * cos(Phi), -1*cosTheta, -1*sinTheta * sin(Phi));
 
   G4AnalysisManager* analysis = G4AnalysisManager::Instance();
 
