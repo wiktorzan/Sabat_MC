@@ -81,6 +81,6 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
   } else if (command == fSetAlphaEnergy) {
     fPrimGen->SetAlphaEnergy(fSetAlphaEnergy->GetNewDoubleValue(newValue));
   } else if (command == fSetSourcePosition) {
-    fPrimGen->SetSourcePosition(fSetSourcePosition->GetNewDoubleValue(newValue));
+    fPrimGen->SetSourcePosition(G4ThreeVector(0., fSetSourcePosition->GetNewDoubleValue(newValue), 20. * cm));
   }
 }

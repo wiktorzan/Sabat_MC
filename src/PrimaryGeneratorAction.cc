@@ -22,6 +22,8 @@ PrimaryGeneratorAction::PrimaryGeneratorAction() : G4VUserPrimaryGeneratorAction
 {
   fPrimGenMess = new PrimaryGeneratorMessenger(this);
   fGun = new G4ParticleGun();
+
+  fSourcePosition =  G4ThreeVector(0., -55 * cm, 20. * cm);
 }
 
 PrimaryGeneratorAction::~PrimaryGeneratorAction()
@@ -43,7 +45,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
   if (fShootNeutron) {
     fGun->SetParticleDefinition(G4Neutron::Definition());
     fGun->SetParticleEnergy(fNeutronEnergy);
-    fGun->SetParticlePosition(G4ThreeVector(0, fSourcePositionY, 0));
+    fGun->SetParticlePosition(fSourcePosition);
     fGun->SetParticleMomentumDirection(dirNeu);
 
     analysis->FillNtupleDColumn(17, dirNeu.theta()*(180/CLHEP::pi));
@@ -55,7 +57,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     G4ParticleDefinition* myParticle = G4ParticleTable::GetParticleTable()->FindParticle("alpha");
     fGun->SetParticleDefinition(myParticle);
     fGun->SetParticleEnergy(fAlphaEnergy);
-    fGun->SetParticlePosition(G4ThreeVector(0, fSourcePositionY, 0));
+    fGun->SetParticlePosition(fSourcePosition);
     fGun->SetParticleMomentumDirection(dirAlpha);
 
     analysis->FillNtupleDColumn(22, dirAlpha.theta()*180/CLHEP::pi);
