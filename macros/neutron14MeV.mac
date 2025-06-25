@@ -8,7 +8,7 @@
 
 /sabat/primGen/setNeutronEnergy 14.1 MeV
 /sabat/primGen/setAlphaEnergy 3.49 MeV
-/sabat/primGen/setSourcePositionY -15 cm
+/sabat/primGen/setSourcePositionY 0 cm
 
 /analysis/setFileName neutron.root
 
