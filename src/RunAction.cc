@@ -45,6 +45,7 @@ RunAction::RunAction()
   analysisManager->CreateNtupleDColumn("Hit_X2");
   analysisManager->CreateNtupleDColumn("Hit_Y2");
   analysisManager->CreateNtupleDColumn("Hit_Z2");
+  analysisManager->CreateNtupleSColumn("Hit_Label");
   analysisManager->CreateNtupleDColumn("Alpha_Theta");
   analysisManager->CreateNtupleDColumn("Alpha_Phi");
   if (fIncludeAlphaDetectorFields == "t") {

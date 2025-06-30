@@ -31,6 +31,16 @@ public:
                                 minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
     EnergyDepositionWithVetoSmeared = new TH1D("EnergyDepositionWithVetoSmeared","Energy Deposition Smeared; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
                                        minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+
+    EnergyDepositionCapture = new TH1D("EnergyDepositionCapture","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+    EnergyDepositionInelastic = new TH1D("EnergyDepositionInelastic","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                       minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+    EnergyDepositionOther = new TH1D("EnergyDepositionOther","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                         minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+
+    EnergyDepositionVsMassNumber = new TH2D("EnergyDepositionVsMassNumber","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize, 300, -0.5, 299.5);
   }
 
   void CreateTimingHistos(double minTime, double timeSeparator, double maxTime, double binSizeSmall, double binSizeLarge)
@@ -44,6 +54,19 @@ public:
     TimeDifferenceLarge = new TH1D("TimeDifferenceLarge","Time Difference; Time [us]; Counts", (maxTime - timeSeparator)/binSizeLarge,
                                        timeSeparator - 0.5*binSizeLarge, maxTime - 0.5*binSizeLarge);
     timeSep = timeSeparator;
+
+    TimeLaBrCaptureSmall = new TH1D("TimeLaBrCaptureSmall","Time; Time [us]; Counts", (timeSeparator - minTime)/binSizeSmall,
+                                    minTime - 0.5*binSizeSmall, timeSeparator - 0.5*binSizeSmall);
+    TimeLaBrInelasticSmall = new TH1D("TimeLaBrInelasticSmall","Time; Time [us]; Counts", (timeSeparator - minTime)/binSizeSmall,
+                                      minTime - 0.5*binSizeSmall, timeSeparator - 0.5*binSizeSmall);
+    TimeLaBrOtherSmall = new TH1D("TimeLaBrOtherSmall","Time; Time [us]; Counts", (timeSeparator - minTime)/binSizeSmall,
+                                  minTime - 0.5*binSizeSmall, timeSeparator - 0.5*binSizeSmall);
+    TimeLaBrCaptureLarge = new TH1D("TimeLaBrCaptureLarge","Time; Time [us]; Counts", (maxTime - timeSeparator)/binSizeLarge,
+                                    timeSeparator - 0.5*binSizeLarge, maxTime - 0.5*binSizeLarge);
+    TimeLaBrInelasticLarge = new TH1D("TimeLaBrInelasticLarge","Time; Time [us]; Counts", (maxTime - timeSeparator)/binSizeLarge,
+                                      timeSeparator - 0.5*binSizeLarge, maxTime - 0.5*binSizeLarge);
+    TimeLaBrOtherLarge = new TH1D("TimeLaBrOtherLarge","Time; Time [us]; Counts", (maxTime - timeSeparator)/binSizeLarge,
+                                  timeSeparator - 0.5*binSizeLarge, maxTime - 0.5*binSizeLarge);
   }
 
   void CreateEnergyVsTimingHistos(double minEnergy, double maxEnergy, double binSize, double minTime, double maxTime, double binSizeLarge)
@@ -64,6 +87,19 @@ public:
   void FillEnergyDepositionVeto(double energy) {EnergyDepositionVeto->Fill(energy);}
   void FillEnergyDepositionWithVeto(double energy) {EnergyDepositionWithVeto->Fill(energy);}
   void FillEnergyDepositionWithVetoSmeared(double energy) {EnergyDepositionWithVetoSmeared->Fill(energy);}
+  void FillEnergyDepositionVsTimeDiff(double energy, double time) {EnergyDepositionVsTimeDiff->Fill(energy, time);}
+  void FillEnergyDepositionVsTimeDiffSmeared(double energy, double time) {EnergyDepositionVsTimeDiffSmeared->Fill(energy, time);}
+  void FillEnergyDepositionForAProcess(double energy, char label) {
+    if (label == 'C')
+      EnergyDepositionCapture->Fill(energy);
+    else if (label == 'I')
+      EnergyDepositionInelastic->Fill(energy);
+    else
+      EnergyDepositionOther->Fill(energy);
+  }
+  void FillEnergyDepositionVsMassNumber(double energy, int massNo) {
+    EnergyDepositionVsMassNumber->Fill(energy, massNo);
+  }
   void FillTimeLaBr(double time) {TimeLaBr->Fill(time);}
   void FillTimeVeto(double time) {TimeVeto->Fill(time);}
   void FillTimeDifference(double time)
@@ -73,8 +109,24 @@ public:
     else
       TimeDifferenceLarge->Fill(time);
   }
-  void FillEnergyDepositionVsTimeDiff(double energy, double time) {EnergyDepositionVsTimeDiff->Fill(energy, time);}
-  void FillEnergyDepositionVsTimeDiffSmeared(double energy, double time) {EnergyDepositionVsTimeDiffSmeared->Fill(energy, time);}
+  void FillTimeLaBrForAProcess(double time, char label) {
+    if (label == 'C') {
+      if (time < timeSep)
+        TimeLaBrCaptureSmall->Fill(time);
+      else
+        TimeLaBrCaptureLarge->Fill(time);
+    } else if (label == 'I') {
+      if (time < timeSep)
+        TimeLaBrInelasticSmall->Fill(time);
+      else
+        TimeLaBrInelasticLarge->Fill(time);
+    } else {
+      if (time < timeSep)
+        TimeLaBrOtherSmall->Fill(time);
+      else
+        TimeLaBrOtherLarge->Fill(time);
+    }
+  }
 
   void SaveHistos(TString output)
   {
@@ -86,12 +138,22 @@ public:
     EnergyDepositionVeto->Write("EnergyDepositionVeto");
     EnergyDepositionWithVeto->Write("EnergyDepositionWithVeto");
     EnergyDepositionWithVetoSmeared->Write("EnergyDepositionWithVetoSmeared");
+    EnergyDepositionVsTimeDiff->Write("EnergyDepositionVsTimeDiff");
+    EnergyDepositionVsTimeDiffSmeared->Write("EnergyDepositionVsTimeDiffSmeared");
+    EnergyDepositionCapture->Write("EnergyDepositionCapture");
+    EnergyDepositionInelastic->Write("EnergyDepositionInelastic");
+    EnergyDepositionOther->Write("EnergyDepositionOther");
+    EnergyDepositionVsMassNumber->Write("EnergyDepositionVsMassNumber");
     TimeLaBr->Write("TimeLaBr");
     TimeVeto->Write("TimeVeto");
     TimeDifferenceSmall->Write("TimeDifferenceSmall");
     TimeDifferenceLarge->Write("TimeDifferenceLarge");
-    EnergyDepositionVsTimeDiff->Write("EnergyDepositionVsTimeDiff");
-    EnergyDepositionVsTimeDiffSmeared->Write("EnergyDepositionVsTimeDiffSmeared");
+    TimeLaBrCaptureSmall->Write("TimeLaBrCaptureSmall");
+    TimeLaBrInelasticSmall->Write("TimeLaBrInelasticSmall");
+    TimeLaBrOtherSmall->Write("TimeLaBrOtherSmall");
+    TimeLaBrCaptureLarge->Write("TimeLaBrCaptureLarge");
+    TimeLaBrInelasticLarge->Write("TimeLaBrInelasticLarge");
+    TimeLaBrOtherLarge->Write("TimeLaBrOtherLarge");
     outfile->Close();
   }
 
@@ -103,13 +165,23 @@ private:
   TH1D *EnergyDepositionVeto;
   TH1D *EnergyDepositionWithVeto;
   TH1D *EnergyDepositionWithVetoSmeared;
+  TH2D *EnergyDepositionVsTimeDiff;
+  TH2D *EnergyDepositionVsTimeDiffSmeared;
+  TH1D *EnergyDepositionCapture;
+  TH1D *EnergyDepositionInelastic;
+  TH1D *EnergyDepositionOther;
+  TH2D* EnergyDepositionVsMassNumber;
+
   TH1D *TimeLaBr;
   TH1D *TimeVeto;
   TH1D *TimeDifferenceSmall;
   TH1D *TimeDifferenceLarge;
-
-  TH2D *EnergyDepositionVsTimeDiff;
-  TH2D *EnergyDepositionVsTimeDiffSmeared;
+  TH1D *TimeLaBrCaptureSmall;
+  TH1D *TimeLaBrInelasticSmall;
+  TH1D *TimeLaBrOtherSmall;
+  TH1D *TimeLaBrCaptureLarge;
+  TH1D *TimeLaBrInelasticLarge;
+  TH1D *TimeLaBrOtherLarge;
 };
 
 #endif

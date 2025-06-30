@@ -55,9 +55,14 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
 
     double totEdep = 0.; // in MeV, but trying to set as double to fix the issue with zero TotEDep
 
+    if (numberHits)
+      PrepareReactionLabels();
+
     for(int i1=0; i1<numberHits; i1++) {
       auto hit = (*hitsColl)[i1];
       G4String processCheck = hit->GetPrcName();
+      if (processCheck == "Transportation")
+        continue;
 
       double energy_step=0.;
       energy_step = hit->GetDeltaEnergy()/MeV;
@@ -84,6 +89,8 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
       analysis->FillNtupleDColumn(19, positionPostStep.getX() / cm);
       analysis->FillNtupleDColumn(20, positionPostStep.getY() / cm);
       analysis->FillNtupleDColumn(21, positionPostStep.getZ() / cm);
+      G4String hitLabel = FindLabel(hit->GetTrackID());
+      analysis->FillNtupleSColumn(22, hitLabel);
 
       analysis->AddNtupleRow();
 
@@ -107,13 +114,13 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
         energy_step = hit->GetDeltaEnergy()/MeV;
 
         analysis->FillNtupleIColumn(15, evnt->GetEventID());
-        analysis->FillNtupleDColumn(24, energy_step);
-        analysis->FillNtupleDColumn(25, hit->GetTime() / us);
+        analysis->FillNtupleDColumn(25, energy_step);
+        analysis->FillNtupleDColumn(26, hit->GetTime() / us);
         G4ThreeVector position = hit->GetPosition();
-        analysis->FillNtupleDColumn(26, position.getX() / cm);
-        analysis->FillNtupleDColumn(27, position.getY() / cm);
-        analysis->FillNtupleDColumn(28, position.getZ() / cm);
-        analysis->FillNtupleSColumn(29, hit->GetParName());
+        analysis->FillNtupleDColumn(27, position.getX() / cm);
+        analysis->FillNtupleDColumn(28, position.getY() / cm);
+        analysis->FillNtupleDColumn(29, position.getZ() / cm);
+        analysis->FillNtupleSColumn(30, hit->GetParName());
 
         analysis->AddNtupleRow();
       }
@@ -122,4 +129,50 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
     if (tempEvent == evnt->GetEventID())
       G4cout << "////////////////////////////////////////////" << G4endl;
   }
+
+  fNeutronTimeVsInteraction.clear();
+  fParticleTrackTime.clear();
+}
+
+void EventAction::PrepareReactionLabels()
+{
+  fTimeReactionLabels.clear();
+  G4String label;
+  for (auto it=fNeutronTimeVsInteraction.begin(); it!=fNeutronTimeVsInteraction.end(); it++) {
+    label = "";
+    double time = it->first;
+
+    if (it->second == InteractionType::fNeuCapture)
+      label = "nC";
+    else if (it->second == InteractionType::fNeuInelastic)
+      label = "nI";
+    else
+      label = "nO";
+
+    int noOfGamma = 0;
+    for (unsigned i=0; i<fParticleTrackTime.size(); i++) {
+      if (std::get<2>(fParticleTrackTime.at(i)) == time) {
+        if (std::get<0>(fParticleTrackTime.at(i)) == "gamma")
+          noOfGamma++;
+        else
+          label += "_" + std::get<0>(fParticleTrackTime.at(i));
+      }
+    }
+    fTimeReactionLabels.insert(std::pair{time, label});
+  }
+}
+
+G4String EventAction::FindLabel(int trackID) {
+  for (unsigned i=0; i<fParticleTrackTime.size(); i++) {
+    if (std::get<1>(fParticleTrackTime.at(i)) == trackID) {
+      auto it = fTimeReactionLabels.find(std::get<2>(fParticleTrackTime.at(i)));
+      return it->second;
+    }
+  }
+  G4String labelForOthers;
+  if (trackID == 1)
+    labelForOthers = "primaryN";
+  else
+    labelForOthers = "secondary";
+  return labelForOthers;
 }

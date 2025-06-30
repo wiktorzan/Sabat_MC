@@ -38,6 +38,8 @@ double SiDecayTime = 0.09; // in us for silicon drift detectors
 
 bool FileCheck(const std::string& NameOfFile);
 double SmearEnergy(double energy);
+std::vector<std::string> SplitString(std::string& s, const std::string& delimiter);
+int GetMassNumberFromProducts(std::string label);
 void AnalyzeFile(std::string NameOfFile, HistCollection histo);
 
 int main(int argc, char* argv[])
@@ -53,7 +55,7 @@ int main(int argc, char* argv[])
 
 //--------------------------------------------------------
 //Setting environment for results
-  Double_t minEnergy = 0, maxEnergy = 24, binSize = 0.01; // in MeV
+  Double_t minEnergy = 0, maxEnergy = 12, binSize = 0.01; // in MeV
   Double_t minTime = 0, timeSeparator = 1, maxTime = 1500, binSizeSmall = 0.001, binSizeLarge = 1; // in us
   HistCollection hist;
   hist.CreateEnergyHistos(minEnergy, maxEnergy, binSize);
@@ -146,7 +148,7 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
   Double_t Energy_Deposit, Neutron_Theta, Neutron_Phi, Time, Hit_X, Hit_Y, Hit_Z;
   Double_t Veto_Energy_Deposit, Veto_Time, Veto_Hit_X, Veto_Hit_Y ,Veto_Hit_Z;
   Int_t CurrentEvent, EventVeto, Parent_ID;
-  Char_t Particles[6], Veto_Particles[6], Process[22];
+  Char_t Particles[7], Veto_Particles[7], Process[22], Label[32];
   Int_t Volume;
   Char_t Volume2[13];
   Int_t Event_ID;
@@ -163,6 +165,7 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
   ntuple->SetBranchAddress("Event_ID", &Event_ID);
   ntuple->SetBranchAddress("Neutron_Theta", &Neutron_Theta);
   ntuple->SetBranchAddress("Neutron_Phi", &Neutron_Phi);
+  ntuple->SetBranchAddress("Hit_Label", Label);
   ntuple->SetBranchAddress("Veto_Energy_Deposition", &Veto_Energy_Deposit);
   ntuple->SetBranchAddress("Veto_Time", &Veto_Time);
   ntuple->SetBranchAddress("Veto_Hit_X", &Veto_Hit_X);
@@ -175,8 +178,11 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
   Double_t EnergyDepositFinal = 0, EnergyDepositVetoFinal = 0;
   Double_t FirstTime = 0, FirstTimeVeto = 0;
   CurrentEvent = -1;
+  std::string currLabel = "";
   for (Int_t i=0; i<nentries; i++) {
     ntuple->GetEntry(i);
+
+    std::string tempLabel(Label);
 
     if (Event_ID > CurrentEvent) {
       CurrentEvent = Event_ID;
@@ -184,6 +190,10 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
         histo.FillTimeDifference(FirstTime - FirstTimeVeto);
       }
       if (EnergyDepositFinal > 0) {
+        histo.FillEnergyDepositionForAProcess(EnergyDepositFinal, currLabel[1]);
+        histo.FillTimeLaBrForAProcess(FirstTime, currLabel[1]);
+        histo.FillEnergyDepositionVsMassNumber(EnergyDepositFinal, GetMassNumberFromProducts(currLabel));
+
         histo.FillEnergyDeposition(EnergyDepositFinal);
         double eneSmeared = EnergyDepositFinal + SmearEnergy(EnergyDepositFinal);
         histo.FillEnergyDepositionSmeared(eneSmeared);
@@ -204,6 +214,7 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
       FirstTimeVeto = 0;
       EnergyDepositFinal = 0;
       EnergyDepositVetoFinal = 0;
+      currLabel = "";
     }
 
     if (Event_ID == CurrentEvent) {
@@ -226,8 +237,79 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
         if ((strcmp(Veto_Particles, "alpha") == 0 || strcmp(Veto_Particles, "e-") == 0))
           EnergyDepositVetoFinal = EnergyDepositVetoFinal + Veto_Energy_Deposit;
       }
+
+      if (currLabel == "") {
+        std::string tempPart(Particles);
+
+        if (tempPart != "neutron" && tempPart != "") {
+          currLabel = tempLabel;
+        }
+      } else if (Label[0] != 's') { // Omitting secondaries
+        if (Label[0] == 'n' && tempLabel != currLabel) {
+          currLabel = "Mixed";
+        }
+      }
     }
   }
+}
+
+int GetMassNumberFromProducts(std::string label)
+{
+  if (label.at(0) != 'n')
+    return 0;
+
+  std::vector<std::string> products = SplitString(label, "_");
+  int massNumber = -1;
+
+  int firstNumberCode = 48;
+  for (unsigned i=1; i<products.size(); i++) {
+    int lengthOfString = products.at(i).size();
+    if (products.at(i) == "proton" || products.at(i) == "neutron")
+      massNumber += 1;
+    else if (products.at(i) == "deuteron")
+      massNumber += 2;
+    else if (products.at(i) == "triton")
+      massNumber += 3;
+    else if (products.at(i) == "alpha")
+      massNumber += 4;
+    else if (lengthOfString <= 5 && lengthOfString > 1) {
+      if (lengthOfString <= 3) {
+        int decNum = -firstNumberCode + (int)products.at(i).at(lengthOfString-2);//std::atoi(products.at(i).at(lengthOfString-2));
+        int intNum = -firstNumberCode + (int)products.at(i).at(lengthOfString-1);//std::atoi(products.at(i).at(lengthOfString-1));
+        if (decNum <= 9)
+          massNumber += 10*decNum;
+        if (intNum <= 9)
+          massNumber += intNum;
+      } else {
+        int hunNum = -firstNumberCode + (int)products.at(i).at(lengthOfString-3);//std::atoi(products.at(i).at(lengthOfString-3));
+        int decNum = -firstNumberCode + (int)products.at(i).at(lengthOfString-2);//std::atoi(products.at(i).at(lengthOfString-2));
+        int intNum = -firstNumberCode + (int)products.at(i).at(lengthOfString-1);//std::atoi(products.at(i).at(lengthOfString-1));
+        if (hunNum <= 9)
+          massNumber += 100*hunNum;
+        if (decNum <= 9)
+          massNumber += 10*decNum;
+        if (intNum <= 9)
+          massNumber += intNum;
+      }
+    } else
+      std::cout << "Unknown part: " << products.at(i) << std::endl;
+  }
+  return massNumber;
+}
+
+std::vector<std::string> SplitString(std::string& s, const std::string& delimiter)
+{
+  std::vector<std::string> tokens;
+  size_t pos = 0;
+  std::string token;
+  while ((pos = s.find(delimiter)) != std::string::npos) {
+    token = s.substr(0, pos);
+    tokens.push_back(token);
+    s.erase(0, pos + delimiter.length());
+  }
+  tokens.push_back(s);
+
+  return tokens;
 }
 
 double SmearEnergy(double energy)

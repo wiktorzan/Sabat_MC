@@ -58,8 +58,8 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
     fGun->SetParticlePosition(G4ThreeVector(0, fSourcePositionY, 0));
     fGun->SetParticleMomentumDirection(dirAlpha);
 
-    analysis->FillNtupleDColumn(22, dirAlpha.theta()*180/CLHEP::pi);
-    analysis->FillNtupleDColumn(23, dirAlpha.phi()*180/CLHEP::pi);
+    analysis->FillNtupleDColumn(23, dirAlpha.theta()*180/CLHEP::pi);
+    analysis->FillNtupleDColumn(24, dirAlpha.phi()*180/CLHEP::pi);
     fGun->GeneratePrimaryVertex(anEvent);
   }
 }
