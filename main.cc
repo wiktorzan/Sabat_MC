@@ -39,8 +39,9 @@ int main(int argc, char** argv)
   G4RunManager* runManager = new G4RunManager;
 
   runManager->SetUserInitialization(new PhysicsList());
-  runManager->SetUserInitialization(new DetectorConstruction());
-  ActionInitialization* actInit = new ActionInitialization();
+  DetectorConstruction* detCons = new DetectorConstruction();
+  runManager->SetUserInitialization(detCons);
+  ActionInitialization* actInit = new ActionInitialization(detCons);
   actInit->SetTimeAndSeedAdd(seedAndTime);
   runManager->SetUserInitialization(actInit);
 //  runManager->Initialize(); // initialization is in the macro

@@ -1,23 +1,27 @@
 /// \file ActionInitialization.cc
 /// \brief Implementation of the ActionInitialization class
 
-#include "ActionInitialization.hh"
 #include "PrimaryGeneratorAction.hh"
+#include "ActionInitialization.hh"
 #include "EventAction.hh"
 
 #include "RunAction.hh"
 #include "StackingAction.hh"
 #include "SteppingAction.hh"
 
-ActionInitialization::ActionInitialization() : G4VUserActionInitialization()
-{;}
+ActionInitialization::ActionInitialization(DetectorConstruction* detCons) : G4VUserActionInitialization()
+{
+    detConsPoint = detCons;
+}
 
 ActionInitialization::~ActionInitialization()
 {;}
 
 void ActionInitialization::Build() const
 {
-    SetUserAction(new PrimaryGeneratorAction());
+    PrimaryGeneratorAction* thePrimGenAction = new PrimaryGeneratorAction();
+    detConsPoint->SetPrimGen(thePrimGenAction);
+    SetUserAction(thePrimGenAction);
 
     RunAction* theRunAction = new RunAction();
     theRunAction->SetTimeAndSeed(timeAndSeedAdd);

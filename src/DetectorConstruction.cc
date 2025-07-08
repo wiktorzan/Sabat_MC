@@ -242,11 +242,6 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
         break;
     }
 
-    
-
-    
- 
-
 //--------------------geometry--------------------//
 //---------------volumes-definition---------------//
     //World
@@ -263,9 +258,9 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     logicWorld->SetVisAttributes(worldVisAtt);
 
     // SAND
-    G4double sandXLength = 4 * m;
+    G4double sandXLength = 10 * m;
     G4double sandYLength = 100 * cm;
-    G4double sandZLength = 4 * m;
+    G4double sandZLength = 8 * m;
     G4Box *solidSANDVolume = new G4Box("SAND", 0.5 * sandXLength, 0.5 * sandYLength, 0.5 * sandZLength);
     G4LogicalVolume *logicSANDVolume = new G4LogicalVolume(solidSANDVolume, SandSediment, "SAND");
     
@@ -409,17 +404,21 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
 
 
 //------------Placement-----------//
-    //Sand
-    G4ThreeVector sandShift(0., -170 * cm, 0.);
-    new G4PVPlacement(0, sandShift, logicSANDVolume, "SAND", logicWorld, false, 1, checkOverlaps);
-    //target
+    G4RotationMatrix *rotationSand = new G4RotationMatrix();
+    rotationSand->rotateZ(90 * deg);
     G4RotationMatrix *rotationTarget = new G4RotationMatrix();
     rotationTarget->rotateY(90 * deg);
-    G4ThreeVector targetCoverShift = sandShift +G4ThreeVector(
-        0.,
+    G4ThreeVector shiftFromTargetCenter(-0.5*detectorCaseRmax, 0., 0.);
+    //Sand
+    G4ThreeVector setupShift(0., -170 * cm, 0.);
+    G4ThreeVector sandShift(-0.5*targetCoverDimY - 0.5*sandYLength, 0., 0.);
+    new G4PVPlacement(rotationSand, sandShift + shiftFromTargetCenter, logicSANDVolume, "SAND", logicWorld, false, 1, checkOverlaps);
+    //target
+    G4ThreeVector targetCoverShift = setupShift + G4ThreeVector(
+        0,
         sandYLength / 2 + targetCoverDimY / 2,
         0.);
-    new G4PVPlacement(rotationTarget, targetCoverShift, logicTGVolumeCover, "TargetVolumeCover", logicWorld, false, 2, checkOverlaps);
+    new G4PVPlacement(rotationTarget, targetCoverShift + shiftFromTargetCenter, logicTGVolumeCover, "TargetVolumeCover", logicWorld, false, 2, checkOverlaps);
     new G4PVPlacement(0, G4ThreeVector(), logicTGVolume, "TargetVolume", logicTGVolumeCover, false, 3, checkOverlaps);
 
     //construction parameters
@@ -457,8 +456,8 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     G4ThreeVector vetoShift(0., 0., 5.0 * cm );
     new G4PVPlacement(rotVeto, vetoShift, logicVeto, "DetectorSi", logicGeneratorInner, false, 21, checkOverlaps);
 
-    std::cout << "--------------------------Source should be placed at: " << generatorCaseShift  << std::endl;
-    
+    std::cout << "--------------------------Source is placed at: " << generatorCaseShift  << std::endl;
+    fPrimGen->SetSourcePosition(generatorCaseShift);
     //Arm - detector
     G4ThreeVector armShiftDet = detectorCaseShift + G4ThreeVector(
         0.,
@@ -476,7 +475,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     G4RotationMatrix *rotROV = new G4RotationMatrix();
     rotROV->rotateZ(90*deg);
     G4ThreeVector ROVShift = (armShiftGen + armShiftDet)/2 + G4ThreeVector(
-        0.,
+        0.5*ROVDimY-0.5*detectorCaseRmax,
         armHalfLengthZ + ROVDimX / 2,
         0.);
     new G4PVPlacement (rotROV, ROVShift, logicROVPP, "ROVPP", logicWorld, false, 14, checkOverlaps);

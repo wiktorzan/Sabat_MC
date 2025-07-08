@@ -4,6 +4,7 @@
 #ifndef DETECTOR_CONSTRUCTION_HH
 #define DETECTOR_CONSTRUCTION_HH
 
+#include "PrimaryGeneratorAction.hh"
 #include "DetectorMessenger.hh"
 #include <G4VUserDetectorConstruction.hh>
 #include "G4ThreeVector.hh"
@@ -37,6 +38,7 @@ public:
   G4VPhysicalVolume* Construct() override;
   
   void ConstructSDandField() override;
+  void SetPrimGen(PrimaryGeneratorAction* primGen) {fPrimGen = primGen;};
   void SetTarget(TargetVariables target) {targetType = target;};
 
   void SetCADFilename(std::string name) {
@@ -45,14 +47,18 @@ public:
   void SetCADFiletype(std::string type) {
     filetype = type;
   };
+
+  G4ThreeVector GetSourcePos() {return sourcePos;};
   
 private:
   DetectorMessenger* fDetMess;
+  PrimaryGeneratorAction* fPrimGen;
   G4ThreeVector offset;
   std::string filename;
   std::string filetype;
 
   TargetVariables targetType = TargetVariables::fWater;
+  G4ThreeVector sourcePos;
       
   G4VSolid *cad_solid;
   G4LogicalVolume * cad_logical;

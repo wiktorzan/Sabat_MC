@@ -5,6 +5,7 @@
 #define ACTION_INITIALIZATION_HH
 
 #include <G4VUserActionInitialization.hh>
+#include "DetectorConstruction.hh"
 #include <string>
 
 /// Action initialization class.
@@ -13,7 +14,7 @@ class ActionInitialization : public G4VUserActionInitialization
 {
 public:
   ///Constructor
-  ActionInitialization();
+  ActionInitialization(DetectorConstruction* detCons);
   ///Destructor
   ~ActionInitialization();
 
@@ -27,6 +28,7 @@ public:
 
   void SetTimeAndSeedAdd(std::string add) {timeAndSeedAdd = add;};
 private:
+  DetectorConstruction* detConsPoint;
   std::string timeAndSeedAdd = "";
 };
 

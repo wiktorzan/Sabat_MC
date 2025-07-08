@@ -21,7 +21,6 @@ public:
   void RemoveAlphaGen() {fShootAlpha = false;};
   void SetNeutronEnergy(G4double energy) {fNeutronEnergy = energy;};
   void SetAlphaEnergy(G4double energy) {fAlphaEnergy = energy;};
-  // void SetSourcePosition(G4double yPosition) {fSourcePositionY = yPosition;};
   void SetSourcePosition(G4ThreeVector position) {fSourcePosition = position;};
 
   void GeneratePrimaries(G4Event* anEvent) override;
@@ -34,7 +33,7 @@ private:
   G4double fNeutronEnergy = 14.1*MeV;
   G4double fAlphaEnergy = 3.49*MeV;
   G4double fSourcePositionY = 0*cm;
-  G4ThreeVector fSourcePosition; // default position
+  G4ThreeVector fSourcePosition; // setting it from the level of DetectorConstruction after constructing the source
 
   G4ParticleGun* fGun;
 };
