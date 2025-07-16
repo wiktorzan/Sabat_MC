@@ -1,3 +1,6 @@
+/sabat/det/setGeometryVersion v2
+/sabat/det/changeTargetMaterial water
+
 /run/initialize
 
 /analysis/setFileName visual.root

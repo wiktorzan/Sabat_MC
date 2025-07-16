@@ -25,6 +25,9 @@ class DetectorMessenger;
 enum TargetVariables {
   fWater, fMustardGas, fTNT, fClark1, fClark2
 };
+enum GeometryVersion {
+  fV1, fV2
+};
 
 /// Detector construction class to define materials (with their physical properties) and detector geometry.
 class DetectorConstruction : public G4VUserDetectorConstruction
@@ -36,10 +39,15 @@ public:
   virtual ~DetectorConstruction();
 
   G4VPhysicalVolume* Construct() override;
+
+  //Alternative geometry construction
+  G4VPhysicalVolume* ConstructV1();
+  G4VPhysicalVolume* ConstructV2();
   
   void ConstructSDandField() override;
   void SetPrimGen(PrimaryGeneratorAction* primGen) {fPrimGen = primGen;};
   void SetTarget(TargetVariables target) {targetType = target;};
+  void SetGeometryVersion(GeometryVersion version) {geometryVersion = version;};
 
   void SetCADFilename(std::string name) {
     filename = name;
@@ -58,6 +66,7 @@ private:
   std::string filetype;
 
   TargetVariables targetType = TargetVariables::fWater;
+  GeometryVersion geometryVersion = GeometryVersion::fV2;
   G4ThreeVector sourcePos;
       
   G4VSolid *cad_solid;

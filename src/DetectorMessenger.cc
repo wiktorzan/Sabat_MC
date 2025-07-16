@@ -41,12 +41,16 @@ DetectorMessenger::DetectorMessenger(DetectorConstruction* detCons) : G4UImessen
 
   fSetTargetMaterial = new G4UIcmdWithAString("/sabat/det/changeTargetMaterial", this);
   fSetTargetMaterial->SetGuidance("Option to change material of the target - Water, MustardGas, TNT, Clark1, Clark2");
+
+  fSetGeometryVersion = new G4UIcmdWithAString("/sabat/det/setGeometryVersion", this);
+  fSetGeometryVersion->SetGuidance("Option to change geometry version - V1, V2");
 }
 
 DetectorMessenger::~DetectorMessenger()
 {
   delete fDetDir;
   delete fSetTargetMaterial;
+  delete fSetGeometryVersion;
 }
 
 void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
@@ -63,6 +67,16 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
       fDet->SetTarget(TargetVariables::fClark1);
     } else if (newValue == "Clark2" || newValue == "clark2" ||newValue == "C2" || newValue == "c2") {
       fDet->SetTarget(TargetVariables::fClark2);
+    }
+  }
+
+  if (command == fSetGeometryVersion) {
+    if (newValue == "V1" || newValue == "v1" || newValue == "1") {
+      fDet->SetGeometryVersion(GeometryVersion::fV1);
+    } else if (newValue == "V2" || newValue == "v2" || newValue == "2") {
+      fDet->SetGeometryVersion(GeometryVersion::fV2);
+    } else {
+      G4cout << "Unknown geometry version: " << newValue << G4endl;
     }
   }
 }
