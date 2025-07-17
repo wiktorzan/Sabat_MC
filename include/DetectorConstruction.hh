@@ -41,6 +41,7 @@ public:
   G4VPhysicalVolume* Construct() override;
 
   //Alternative geometry construction
+  void ConstructMaterials();
   G4VPhysicalVolume* ConstructV1();
   G4VPhysicalVolume* ConstructV2();
   
@@ -72,6 +73,21 @@ private:
   G4VSolid *cad_solid;
   G4LogicalVolume * cad_logical;
   G4VPhysicalVolume *cad_physical;
+
+  //Materials
+  G4Material* fSeaWater;
+  G4Material* fSandSediment;
+  G4Material* fLCSt;
+  G4Material* fTargetMat;
+  G4Material* fAir;
+  G4Material* fLaBr3_Ce;
+  G4Material* fPolypropylene;
+  G4Material* fVacuum;
+  G4Material* fVetoMat;
+  G4Material* fIron;
+  G4Material* fLead;
+
+
 };
 
 #endif
