@@ -54,10 +54,10 @@ PrimaryGeneratorMessenger::PrimaryGeneratorMessenger(PrimaryGeneratorAction* pri
   fSetAlphaEnergy->SetDefaultValue(3.49*MeV);
   fSetAlphaEnergy->SetUnitCandidates("MeV");
 
-  fSetSourcePosition = new G4UIcmdWithADoubleAndUnit("/sabat/primGen/setSourcePositionY", this);
-  fSetSourcePosition->SetGuidance("Set the Y position of the source");
-  fSetSourcePosition->SetDefaultValue(-15*cm);
-  fSetSourcePosition->SetUnitCandidates("cm");
+  fSetSourcePositionY = new G4UIcmdWithADoubleAndUnit("/sabat/primGen/setSourcePositionY", this);
+  fSetSourcePositionY->SetGuidance("Set the Y position of the source");
+  fSetSourcePositionY->SetDefaultValue(-15*cm);
+  fSetSourcePositionY->SetUnitCandidates("cm");
 }
 
 PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
@@ -67,7 +67,7 @@ PrimaryGeneratorMessenger::~PrimaryGeneratorMessenger()
   delete fRemoveAlphaFromGen;
   delete fSetNeutronEnergy;
   delete fSetAlphaEnergy;
-  delete fSetSourcePosition;
+  delete fSetSourcePositionY;
 }
 
 void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
@@ -80,7 +80,7 @@ void PrimaryGeneratorMessenger::SetNewValue(G4UIcommand* command, G4String newVa
     fPrimGen->SetNeutronEnergy(fSetNeutronEnergy->GetNewDoubleValue(newValue));
   } else if (command == fSetAlphaEnergy) {
     fPrimGen->SetAlphaEnergy(fSetAlphaEnergy->GetNewDoubleValue(newValue));
-  } else if (command == fSetSourcePosition) {
-    fPrimGen->SetSourcePosition(fSetSourcePosition->GetNewDoubleValue(newValue));
+  } else if (command == fSetSourcePositionY) {
+    fPrimGen->SetSourcePosition(G4ThreeVector(0., fSetSourcePositionY->GetNewDoubleValue(newValue), 20. * cm));
   }
 }

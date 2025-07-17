@@ -54,7 +54,7 @@ private:
   G4UIcmdWithoutParameter* fRemoveAlphaFromGen = nullptr;
   G4UIcmdWithADoubleAndUnit* fSetNeutronEnergy = nullptr;
   G4UIcmdWithADoubleAndUnit* fSetAlphaEnergy = nullptr;
-  G4UIcmdWithADoubleAndUnit* fSetSourcePosition = nullptr;
+  G4UIcmdWithADoubleAndUnit* fSetSourcePositionY = nullptr;
 };
 
 #endif

@@ -1,5 +1,3 @@
-/// \file EventAction.cc
-/// \brief Implementation of the EventAction class
 #include "G4SystemOfUnits.hh"
 #include "SensitiveHit.hh"
 #include "G4RunManager.hh"
@@ -99,7 +97,7 @@ void EventAction::EndOfEventAction(const G4Event* anEvent)
         tempEvent = evnt->GetEventID();
       }
     }
-        
+
     if (totEdep > 0)
       analysis->FillNtupleDColumn(16, totEdep);
 

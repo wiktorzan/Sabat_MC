@@ -1,4 +1,9 @@
+/sabat/det/setGeometryVersion v2
+/sabat/det/changeTargetMaterial water
+
 /run/initialize
+
+/analysis/setFileName visual.root
 
 /vis/open OGL 600x600-0+0
 /vis/viewer/set/background white

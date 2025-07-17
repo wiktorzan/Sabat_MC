@@ -2,13 +2,14 @@
 /run/verbose 2
 
 /sabat/det/changeTargetMaterial mustardgas
+/sabat/det/setGeometryVersion v2
 
 #/sabat/run/removeAlphaFromOutput n
 /sabat/run/addTimeAndSeedToFilename t
 
 /sabat/primGen/setNeutronEnergy 14.1 MeV
 /sabat/primGen/setAlphaEnergy 3.49 MeV
-/sabat/primGen/setSourcePositionY -15 cm
+#/sabat/primGen/setSourcePositionY -15 cm   #zdefiniowane w DetectorConstruction::Construct()
 
 /analysis/setFileName neutron.root
 
