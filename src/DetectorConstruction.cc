@@ -753,8 +753,8 @@ G4VPhysicalVolume *DetectorConstruction::ConstructV2()
 //---------------volumes-definition---------------//
     //World
     G4double worldSizeDimX = 4.2 * m;
-    G4double worldSizeDimY = 5.2 * m;
-    G4double worldSizeDimZ = 4.2 * m;
+    G4double worldSizeDimY = 10.1 * m;
+    G4double worldSizeDimZ = 8.1 * m;
 
     G4Box *solidWorld = new G4Box("World", 0.5 * worldSizeDimX, 0.5 * worldSizeDimY, 0.5 * worldSizeDimZ);
     G4LogicalVolume *logicWorld = new G4LogicalVolume(solidWorld, SeaWater, "World");
@@ -765,9 +765,9 @@ G4VPhysicalVolume *DetectorConstruction::ConstructV2()
     logicWorld->SetVisAttributes(worldVisAtt);
 
     // SAND
-    G4double sandXLength = 5.1 * m;
-    G4double sandYLength = 100 * cm;
-    G4double sandZLength = 4.1 * m;
+    G4double sandXLength = 10 * m;
+    G4double sandYLength = 170 * cm;
+    G4double sandZLength = 8 * m;
     G4Box *solidSANDVolume = new G4Box("SAND", 0.5 * sandXLength, 0.5 * sandYLength, 0.5 * sandZLength);
     G4LogicalVolume *logicSANDVolume = new G4LogicalVolume(solidSANDVolume, SandSediment, "SAND");
     
