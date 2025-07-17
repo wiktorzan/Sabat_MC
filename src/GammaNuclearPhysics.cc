@@ -47,23 +47,4 @@ void GammaNuclearPhysics::ConstructProcess()
       model2->SetMaxEnergy(Emax2);
       process->RegisterMe(model2);
    }
-
- /*  G4ProcessManager* pManager = G4Gamma::Gamma()->GetProcessManager();
-   pManager->AddDiscreteProcess(process);
-
-// Temporary to fix the compilation problem with missing cross-sections
-   G4RayleighScattering* theRayleigh = new G4RayleighScattering();
-   pManager->AddDiscreteProcess(theRayleigh);
-
-   G4PhotoElectricEffect* thePhotoElectricEffect = new G4PhotoElectricEffect();
-   thePhotoElectricEffect->SetEmModel(new G4LivermorePhotoElectricModel());
-   pManager->AddDiscreteProcess(thePhotoElectricEffect);
-
-   G4ComptonScattering* theComptonScattering = new G4ComptonScattering();
-   theComptonScattering->SetEmModel(new G4LivermoreComptonModel());
-   pManager->AddDiscreteProcess(theComptonScattering);
-
-   G4GammaConversion* theGammaConversion = new G4GammaConversion();
-   theGammaConversion->SetEmModel(new G4BetheHeitler5DModel());
-   pManager->AddDiscreteProcess(theGammaConversion);*/
 }

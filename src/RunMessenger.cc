@@ -38,15 +38,29 @@ RunMessenger::RunMessenger(RunAction* runAct) : G4UImessenger(), fRun(runAct)
 {
   fRunDir = new G4UIdirectory("/sabat/run/");
   fRunDir->SetGuidance("Run list commands");
+
+  fAddTimeAndSeedToFilename = new G4UIcmdWithAString("/sabat/run/addTimeAndSeedToFilename", this);
+  fAddTimeAndSeedToFilename->SetGuidance("Option to add time and seed to the filename of the output - t if true");
+
+  fRemovingAlphaFieldsFromOutput = new G4UIcmdWithAString("/sabat/run/removeAlphaFromOutput", this);
+  fRemovingAlphaFieldsFromOutput->SetGuidance("Option to remove alpha fields from the output - t if true");
 }
 
 RunMessenger::~RunMessenger()
 {
   delete fRunDir;
-  delete fGetNextFilenameAddFrom;
+  delete fAddTimeAndSeedToFileName;
+  delete fAddTimeAndSeedToFilename;
   delete fRemovingAlphaFieldsFromOutput;
 }
 
 void RunMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
-{   
+{
+  if (command == fAddTimeAndSeedToFilename) {
+    if (newValue == "True" || newValue == "true" || newValue == "T" || newValue == "t")
+      fRun->AddTimeAndSeed();
+  } else if (command == fRemovingAlphaFieldsFromOutput) {
+    if (newValue == "True" || newValue == "true" || newValue == "T" || newValue == "t")
+      fRun->RemoveAlphaGen();
+  }
 }

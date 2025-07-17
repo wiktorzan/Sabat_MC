@@ -50,8 +50,9 @@ private:
   RunAction* fRun;
 
   G4UIdirectory* fRunDir;
-  G4UIcmdWithAString* fGetNextFilenameAddFrom = nullptr;
-  G4UIcmdWithoutParameter* fRemovingAlphaFieldsFromOutput = nullptr;
+  G4UIcmdWithAString* fAddTimeAndSeedToFileName = nullptr;
+  G4UIcmdWithAString* fAddTimeAndSeedToFilename = nullptr;
+  G4UIcmdWithAString* fRemovingAlphaFieldsFromOutput = nullptr;
 };
 
 #endif

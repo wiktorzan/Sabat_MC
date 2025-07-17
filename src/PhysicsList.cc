@@ -87,5 +87,5 @@ void PhysicsList::ConstructProcess()
 
 void PhysicsList::SetCuts()
 {
-  SetCutValue(1 * mm, "alpha");
+  SetCutValue(1 * mm, "e-");
 }

@@ -36,21 +36,15 @@ int main(int argc, char** argv)
 
   std::string seedAndTime = ss.str() + "_" + std::to_string(seed);
 
-  InitConfig* init = InitConfig::getInstance();
-  init->Initialization();
-  if (argc > 2) {
-    std::string initFileName = argv[2];
-    init->SetFileName(initFileName);
-    init->SetTimeAndSeed(seedAndTime);
-    init->Read();
-  }
-
   G4RunManager* runManager = new G4RunManager;
 
-  runManager->SetUserInitialization(new DetectorConstruction());
   runManager->SetUserInitialization(new PhysicsList());
-  runManager->SetUserInitialization(new ActionInitialization());
-  runManager->Initialize();
+  DetectorConstruction* detCons = new DetectorConstruction();
+  runManager->SetUserInitialization(detCons);
+  ActionInitialization* actInit = new ActionInitialization(detCons);
+  actInit->SetTimeAndSeedAdd(seedAndTime);
+  runManager->SetUserInitialization(actInit);
+//  runManager->Initialize(); // initialization is in the macro
 
 // Get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
