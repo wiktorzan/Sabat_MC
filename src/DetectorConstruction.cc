@@ -522,6 +522,11 @@ G4VPhysicalVolume *DetectorConstruction::ConstructV1()
     G4VisAttributes * sourceVisAtt = new G4VisAttributes(G4Colour(1.,1.,0.));
     sourceVisAtt->SetForceWireframe(true);
     logicShape1->SetVisAttributes(sourceVisAtt);
+
+  // Source placement
+    G4ThreeVector sourcePos = G4ThreeVector(0, -15*cm, 0);
+    std::cout << "--------------------------Source is placed at: " << sourcePos << std::endl;
+    fPrimGen->SetSourcePosition(sourcePos);
   
   // Iron shielding
     G4double shieldXLength = 10*cm;
