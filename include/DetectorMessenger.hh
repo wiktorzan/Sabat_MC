@@ -51,6 +51,7 @@ private:
 
   G4UIdirectory* fDetDir;
   G4UIcmdWithAString* fSetTargetMaterial = nullptr;
+  G4UIcmdWithAString* fSetGeometryVersion = nullptr;
 };
 
 #endif
