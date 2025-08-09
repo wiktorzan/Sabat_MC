@@ -86,6 +86,8 @@ private:
   G4Material* fVetoMat;
   G4Material* fIron;
   G4Material* fLead;
+  G4Material* fPolyethylene;
+  G4Material* fAluminium3003;
 
 
 };

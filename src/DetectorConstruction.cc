@@ -100,6 +100,7 @@ void DetectorConstruction::ConstructMaterials()
     G4Element *Ba = man->FindOrBuildElement("Ba");
     G4Element *Hg = man->FindOrBuildElement("Hg");
     G4Element *Pb = man->FindOrBuildElement("Pb");
+    G4Element *Mn = man->FindOrBuildElement("Mn");
 
     // Sand Sediment - 27 elemental composition
     fSandSediment = new G4Material("SandSediment", 1.535 * g / cm3, 27);
@@ -238,6 +239,17 @@ void DetectorConstruction::ConstructMaterials()
     fLCSt = man->FindOrBuildMaterial("Low_Carbon_Steel");
 
     fPolypropylene = man->FindOrBuildMaterial("G4_POLYPROPYLENE");
+
+    fPolyethylene  = man->FindOrBuildMaterial("G4_POLYETHYLENE");
+
+    fAluminium3003 = new G4Material("Aluminium3003", 2.73 * g / cm3, 6);
+    fAluminium3003->AddElement(Al, 97.55 * perCent);
+    fAluminium3003->AddElement(Si, 0.6 * perCent);
+    fAluminium3003->AddElement(Fe, 0.7 * perCent);
+    fAluminium3003->AddElement(Cu, 0.05 * perCent);
+    fAluminium3003->AddElement(Mn, 1.0 * perCent);
+    fAluminium3003->AddElement(Zn, 0.1 * perCent);
+
 
     fTargetMat = fSeaWater;
 
@@ -671,7 +683,7 @@ G4VPhysicalVolume *DetectorConstruction::ConstructV2()
     G4double armRmax = 12.5/2 * cm;
     G4double armHalfLengthZ = 68.6 / 2 * cm;
     G4VSolid *solidArm = new G4Tubs("Arm", armRmin, armRmax, armHalfLengthZ, 0., 2 * M_PI * rad);
-    G4LogicalVolume *logicArm = new G4LogicalVolume(solidArm, fLCSt, "Arm");
+    G4LogicalVolume *logicArm = new G4LogicalVolume(solidArm, fAluminium3003, "Arm");
 
     G4VisAttributes *armAtt = new G4VisAttributes(G4Color(1.0, 1., 1.0));
     armAtt->SetForceSolid(true);
@@ -699,9 +711,9 @@ G4VPhysicalVolume *DetectorConstruction::ConstructV2()
     G4double ROVWallThicknessSteel = 3 * mm;
 
     G4VSolid *solidROVPP = new G4Box("ROVPP", 0.5 * ROVDimX, 0.5 * ROVDimY, 0.5 * ROVDimZ);
-    G4LogicalVolume *logicROVPP = new G4LogicalVolume(solidROVPP, fPolypropylene, "ROVPP");
+    G4LogicalVolume *logicROVPP = new G4LogicalVolume(solidROVPP, fPolyethylene, "ROVPP");
     G4VSolid *solidROVSteel = new G4Box("ROVSteel", 0.5 * ROVDimX - ROVWallThicknessPP, 0.5 * ROVDimY - ROVWallThicknessPP, 0.5 * ROVDimZ - ROVWallThicknessPP);
-    G4LogicalVolume *logicROVSteel = new G4LogicalVolume(solidROVSteel, fLCSt, "ROVSteel");
+    G4LogicalVolume *logicROVSteel = new G4LogicalVolume(solidROVSteel, fAluminium3003, "ROVSteel");
     G4VSolid *solidROVInner = new G4Box("ROVSteelInner", 0.5 * ROVDimX - ROVWallThicknessPP - ROVWallThicknessSteel, 0.5 * ROVDimY - ROVWallThicknessPP - ROVWallThicknessSteel, 0.5 * ROVDimZ - ROVWallThicknessPP - ROVWallThicknessSteel);
     G4LogicalVolume *logicROVInner = new G4LogicalVolume(solidROVInner, fSeaWater, "ROVSteelInner");
 
