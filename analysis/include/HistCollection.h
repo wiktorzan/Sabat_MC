@@ -11,6 +11,7 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TH3.h"
+#include "TRandom3.h"
 
 class HistCollection
 {
@@ -37,6 +38,12 @@ public:
     EnergyDepositionInelastic = new TH1D("EnergyDepositionInelastic","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
                                        minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
     EnergyDepositionOther = new TH1D("EnergyDepositionOther","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                         minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+    EnergyDepositionCaptureSmr = new TH1D("EnergyDepositionCaptureSmr","Energy Deposition Smeared; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+    EnergyDepositionInelasticSmr = new TH1D("EnergyDepositionInelasticSmr","Energy Deposition Smeared; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                       minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
+    EnergyDepositionOtherSmr = new TH1D("EnergyDepositionOtherSmr","Energy Deposition Smeared; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
                                          minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize);
 
     EnergyDepositionVsMassNumber = new TH2D("EnergyDepositionVsMassNumber","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
@@ -71,12 +78,18 @@ public:
 
   void CreateEnergyVsTimingHistos(double minEnergy, double maxEnergy, double binSize, double minTime, double maxTime, double binSizeLarge)
   {
-    double eneBinSize = 2*binSize;
-    double timeBinSize = 5*binSizeLarge;
+    double eneBinSize = 1*binSize;
+    double timeBinSize = 1*binSizeLarge;
     EnergyDepositionVsTimeDiff = new TH2D("EnergyDepositionVsTimeDiff","Energy Deposition; Energy [MeV]; Time [us]", (maxEnergy - minEnergy)/eneBinSize,
                                           minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize, (maxTime - minTime)/timeBinSize,
                                           minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
     EnergyDepositionVsTimeDiffSmeared = new TH2D("EnergyDepositionWithVetoSmearedVsTimeDiff","Energy Deposition Smeared; Energy [MeV]; Time [us]",
+                                                 (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
+                                                 (maxTime - minTime)/timeBinSize, minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
+    EnergyDepositionVsTimeAbs = new TH2D("EnergyDepositionVsTimeAbs","Energy Deposition; Energy [MeV]; Time abs [us]", (maxEnergy - minEnergy)/eneBinSize,
+                                          minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize, (maxTime - minTime)/timeBinSize,
+                                          minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
+    EnergyDepositionVsTimeAbsSmeared = new TH2D("EnergyDepositionSmearedVsTimeABS","Energy Deposition Smeared; Energy [MeV]; Time abs [us]",
                                                  (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
                                                  (maxTime - minTime)/timeBinSize, minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
   }
@@ -89,13 +102,24 @@ public:
   void FillEnergyDepositionWithVetoSmeared(double energy) {EnergyDepositionWithVetoSmeared->Fill(energy);}
   void FillEnergyDepositionVsTimeDiff(double energy, double time) {EnergyDepositionVsTimeDiff->Fill(energy, time);}
   void FillEnergyDepositionVsTimeDiffSmeared(double energy, double time) {EnergyDepositionVsTimeDiffSmeared->Fill(energy, time);}
+  void FillEnergyDepositionVsTimeAbs(double energy, double time) {EnergyDepositionVsTimeAbs->Fill(energy, time);}
+  void FillEnergyDepositionVsTimeAbsSmeared(double energy, double time) {EnergyDepositionVsTimeAbsSmeared->Fill(energy, time);}
   void FillEnergyDepositionForAProcess(double energy, char label) {
     if (label == 'C')
+    {
       EnergyDepositionCapture->Fill(energy);
+      EnergyDepositionCaptureSmr->Fill(energy + Smear(energy));
+    }
     else if (label == 'I')
+    {
       EnergyDepositionInelastic->Fill(energy);
+      EnergyDepositionInelasticSmr->Fill(energy + Smear(energy));
+    }
     else
+    {
       EnergyDepositionOther->Fill(energy);
+      EnergyDepositionOtherSmr->Fill(energy + Smear(energy));
+    }
   }
   void FillEnergyDepositionVsMassNumber(double energy, int massNo) {
     EnergyDepositionVsMassNumber->Fill(energy, massNo);
@@ -140,9 +164,14 @@ public:
     EnergyDepositionWithVetoSmeared->Write("EnergyDepositionWithVetoSmeared");
     EnergyDepositionVsTimeDiff->Write("EnergyDepositionVsTimeDiff");
     EnergyDepositionVsTimeDiffSmeared->Write("EnergyDepositionVsTimeDiffSmeared");
+    EnergyDepositionVsTimeAbs->Write("EnergyDepositionVsTimeAbs");
+    EnergyDepositionVsTimeAbsSmeared->Write("EnergyDepositionVsTimeAbsSmeared");
     EnergyDepositionCapture->Write("EnergyDepositionCapture");
     EnergyDepositionInelastic->Write("EnergyDepositionInelastic");
     EnergyDepositionOther->Write("EnergyDepositionOther");
+    EnergyDepositionCaptureSmr->Write("EnergyDepositionCaptureSmr");
+    EnergyDepositionInelasticSmr->Write("EnergyDepositionInelasticSmr");
+    EnergyDepositionOtherSmr->Write("EnergyDepositionOtherSmr");
     EnergyDepositionVsMassNumber->Write("EnergyDepositionVsMassNumber");
     TimeLaBr->Write("TimeLaBr");
     TimeVeto->Write("TimeVeto");
@@ -157,6 +186,16 @@ public:
     outfile->Close();
   }
 
+  double Smear(double energy)
+  {
+    //Smearing parameters
+    double a = 2.0*pow(10, -4); // in MeV
+    double b = 2.22*pow(10, -2);
+    double c = 0.5;
+
+    return gRandom->Gaus(0,1)*(a + b*sqrt(energy + c*pow(energy, 2)))/(2.35482004503);
+  }
+
 private:
   double timeSep;
 
@@ -167,9 +206,14 @@ private:
   TH1D *EnergyDepositionWithVetoSmeared;
   TH2D *EnergyDepositionVsTimeDiff;
   TH2D *EnergyDepositionVsTimeDiffSmeared;
+  TH2D *EnergyDepositionVsTimeAbs;
+  TH2D *EnergyDepositionVsTimeAbsSmeared;
   TH1D *EnergyDepositionCapture;
   TH1D *EnergyDepositionInelastic;
   TH1D *EnergyDepositionOther;
+  TH1D *EnergyDepositionCaptureSmr;
+  TH1D *EnergyDepositionInelasticSmr;
+  TH1D *EnergyDepositionOtherSmr;
   TH2D* EnergyDepositionVsMassNumber;
 
   TH1D *TimeLaBr;

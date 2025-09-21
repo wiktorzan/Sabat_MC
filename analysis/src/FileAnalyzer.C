@@ -66,6 +66,11 @@ void FileAnalyzer::Analyze(const std::string& filename)
           if (EnergyDepositVetoFinal > 0) {
             histo.FillEnergyDepositionWithVeto(EnergyDepositFinal);
             histo.FillEnergyDepositionWithVetoSmeared(eneSmeared);
+            if(FirstTime >0)
+            {
+              histo.FillEnergyDepositionVsTimeAbs(EnergyDepositFinal, FirstTime);
+              histo.FillEnergyDepositionVsTimeAbsSmeared(eneSmeared, FirstTime);
+            }
             if (FirstTime > 0 && FirstTimeVeto > 0) {
               histo.FillEnergyDepositionVsTimeDiff(EnergyDepositFinal, FirstTime - FirstTimeVeto);
               histo.FillEnergyDepositionVsTimeDiffSmeared(eneSmeared, FirstTime - FirstTimeVeto);
