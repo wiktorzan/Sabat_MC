@@ -48,6 +48,8 @@ public:
 
     EnergyDepositionVsMassNumber = new TH2D("EnergyDepositionVsMassNumber","Energy Deposition; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
                                 minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize, 300, -0.5, 299.5);
+    EnergyDepositionSmrVsMassNumber = new TH2D("EnergyDepositionSmrVsMassNumber","Energy Deposition Smeared; Energy [MeV]; Counts", (maxEnergy - minEnergy)/binSize,
+                                minEnergy - 0.5*binSize, maxEnergy - 0.5*binSize, 300, -0.5, 299.5);
   }
 
   void CreateTimingHistos(double minTime, double timeSeparator, double maxTime, double binSizeSmall, double binSizeLarge)
@@ -123,6 +125,7 @@ public:
   }
   void FillEnergyDepositionVsMassNumber(double energy, int massNo) {
     EnergyDepositionVsMassNumber->Fill(energy, massNo);
+    EnergyDepositionSmrVsMassNumber->Fill(energy + Smear(energy), massNo);
   }
   void FillTimeLaBr(double time) {TimeLaBr->Fill(time);}
   void FillTimeVeto(double time) {TimeVeto->Fill(time);}
@@ -173,6 +176,7 @@ public:
     EnergyDepositionInelasticSmr->Write("EnergyDepositionInelasticSmr");
     EnergyDepositionOtherSmr->Write("EnergyDepositionOtherSmr");
     EnergyDepositionVsMassNumber->Write("EnergyDepositionVsMassNumber");
+    EnergyDepositionSmrVsMassNumber->Write("EnergyDepositionSmrVsMassNumber");
     TimeLaBr->Write("TimeLaBr");
     TimeVeto->Write("TimeVeto");
     TimeDifferenceSmall->Write("TimeDifferenceSmall");
@@ -215,6 +219,7 @@ private:
   TH1D *EnergyDepositionInelasticSmr;
   TH1D *EnergyDepositionOtherSmr;
   TH2D* EnergyDepositionVsMassNumber;
+  TH2D* EnergyDepositionSmrVsMassNumber;
 
   TH1D *TimeLaBr;
   TH1D *TimeVeto;
