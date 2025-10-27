@@ -197,12 +197,16 @@ void AnalyzeFile(std::string NameOfFile, HistCollection histo)
         histo.FillEnergyDeposition(EnergyDepositFinal);
         double eneSmeared = EnergyDepositFinal + SmearEnergy(EnergyDepositFinal);
         histo.FillEnergyDepositionSmeared(eneSmeared);
+        histo.FillEnergyDepositionVsTimeLaBrCut(EnergyDepositFinal, FirstTime);
+        histo.FillEnergyDepositionVsTimeLaBrCutSmeared(eneSmeared, FirstTime);
         if (EnergyDepositVetoFinal > 0) {
           histo.FillEnergyDepositionWithVeto(EnergyDepositFinal);
           histo.FillEnergyDepositionWithVetoSmeared(eneSmeared);
           if (FirstTime > 0 && FirstTimeVeto > 0) {
             histo.FillEnergyDepositionVsTimeDiff(EnergyDepositFinal, FirstTime - FirstTimeVeto);
             histo.FillEnergyDepositionVsTimeDiffSmeared(eneSmeared, FirstTime - FirstTimeVeto);
+            histo.FillEnergyDepositionVsTimeDiffCut(EnergyDepositFinal, FirstTime - FirstTimeVeto);
+            histo.FillEnergyDepositionVsTimeDiffCutSmeared(eneSmeared, FirstTime - FirstTimeVeto);
           }
         }
       }

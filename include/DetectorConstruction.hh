@@ -23,7 +23,7 @@ class G4Material;
 class DetectorMessenger;
 
 enum TargetVariables {
-  fWater, fMustardGas, fTNT, fClark1, fClark2
+  fWater, fMustardGas, fTNT, fClark1, fClark2, fAdamsite
 };
 enum GeometryVersion {
   fV1, fV2

@@ -12,6 +12,9 @@
 #include "TH2.h"
 #include "TH3.h"
 
+//TODO: include enumerate with labels for histogram and a general fill method
+//TODO: design a safe method to store the histograms in a container and extract them with labels or histogram names
+
 class HistCollection
 {
 public:
@@ -79,6 +82,21 @@ public:
     EnergyDepositionVsTimeDiffSmeared = new TH2D("EnergyDepositionWithVetoSmearedVsTimeDiff","Energy Deposition Smeared; Energy [MeV]; Time [us]",
                                                  (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
                                                  (maxTime - minTime)/timeBinSize, minTime - 0.5*timeBinSize, maxTime - 0.5*timeBinSize);
+    double minTimeCut = 0.002, binSizeForTimeCut = 0.002;
+    int noOfBinsForTimeCut = 150;
+    EnergyDepositionVsTimeDiffCut = new TH2D("EnergyDepositionVsTimeDiffCut","Energy Deposition; Energy [MeV]; Time diff [us]", (maxEnergy - minEnergy)/eneBinSize,
+                                             minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize, noOfBinsForTimeCut,
+                                             minTimeCut - 0.5*binSizeForTimeCut, minTimeCut + (noOfBinsForTimeCut-0.5)*binSizeForTimeCut);
+    EnergyDepositionVsTimeDiffCutSmeared = new TH2D("EnergyDepositionWithVetoSmearedVsTimeDiffCut","Energy Deposition Smeared; Energy [MeV]; Time diff [us]",
+                                                    (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
+                                                    noOfBinsForTimeCut, minTimeCut - 0.5*binSizeForTimeCut, minTimeCut + (noOfBinsForTimeCut-0.5)*binSizeForTimeCut);
+
+    EnergyDepositionVsTimeLaBrCut = new TH2D("EnergyDepositionVsTimeLaBrCut","Energy Deposition; Energy [MeV]; Time [us]", (maxEnergy - minEnergy)/eneBinSize,
+                                             minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize, noOfBinsForTimeCut,
+                                             minTimeCut - 0.5*binSizeForTimeCut, minTimeCut + (noOfBinsForTimeCut-0.5)*binSizeForTimeCut);
+    EnergyDepositionVsTimeLaBrCutSmeared = new TH2D("EnergyDepositionWithVetoSmearedVsTimeLaBrCut","Energy Deposition Smeared; Energy [MeV]; Time [us]",
+                                                    (maxEnergy - minEnergy)/eneBinSize, minEnergy - 0.5*eneBinSize, maxEnergy - 0.5*eneBinSize,
+                                                    noOfBinsForTimeCut, minTimeCut - 0.5*binSizeForTimeCut, minTimeCut + (noOfBinsForTimeCut-0.5)*binSizeForTimeCut);
   }
 
 // If more histos create table/vector/container and add references to the common functions
@@ -89,6 +107,34 @@ public:
   void FillEnergyDepositionWithVetoSmeared(double energy) {EnergyDepositionWithVetoSmeared->Fill(energy);}
   void FillEnergyDepositionVsTimeDiff(double energy, double time) {EnergyDepositionVsTimeDiff->Fill(energy, time);}
   void FillEnergyDepositionVsTimeDiffSmeared(double energy, double time) {EnergyDepositionVsTimeDiffSmeared->Fill(energy, time);}
+  void FillEnergyDepositionVsTimeDiffCut(double energy, double time) {
+    for (unsigned i=1; i<EnergyDepositionVsTimeDiffCut->GetYaxis()->GetNbins(); i++) {
+      double binCent = EnergyDepositionVsTimeDiffCut->GetYaxis()->GetBinCenter(i);
+      if (time > binCent)
+        EnergyDepositionVsTimeDiffCut->Fill(energy, binCent);
+    }
+  }
+  void FillEnergyDepositionVsTimeDiffCutSmeared(double energy, double time) {
+    for (unsigned i=1; i<EnergyDepositionVsTimeDiffCutSmeared->GetYaxis()->GetNbins(); i++) {
+      double binCent = EnergyDepositionVsTimeDiffCutSmeared->GetYaxis()->GetBinCenter(i);
+      if (time > binCent)
+        EnergyDepositionVsTimeDiffCutSmeared->Fill(energy, binCent);
+    }
+  }
+  void FillEnergyDepositionVsTimeLaBrCut(double energy, double time) {
+    for (unsigned i=1; i<EnergyDepositionVsTimeLaBrCut->GetYaxis()->GetNbins(); i++) {
+      double binCent = EnergyDepositionVsTimeLaBrCut->GetYaxis()->GetBinCenter(i);
+      if (time > binCent)
+        EnergyDepositionVsTimeLaBrCut->Fill(energy, binCent);
+    }
+  }
+  void FillEnergyDepositionVsTimeLaBrCutSmeared(double energy, double time) {
+    for (unsigned i=1; i<EnergyDepositionVsTimeLaBrCutSmeared->GetYaxis()->GetNbins(); i++) {
+      double binCent = EnergyDepositionVsTimeLaBrCutSmeared->GetYaxis()->GetBinCenter(i);
+      if (time > binCent)
+        EnergyDepositionVsTimeLaBrCutSmeared->Fill(energy, binCent);
+    }
+  }
   void FillEnergyDepositionForAProcess(double energy, char label) {
     if (label == 'C')
       EnergyDepositionCapture->Fill(energy);
@@ -140,6 +186,10 @@ public:
     EnergyDepositionWithVetoSmeared->Write("EnergyDepositionWithVetoSmeared");
     EnergyDepositionVsTimeDiff->Write("EnergyDepositionVsTimeDiff");
     EnergyDepositionVsTimeDiffSmeared->Write("EnergyDepositionVsTimeDiffSmeared");
+    EnergyDepositionVsTimeDiffCut->Write("EnergyDepositionVsTimeDiffCut");
+    EnergyDepositionVsTimeDiffCutSmeared->Write("EnergyDepositionVsTimeDiffCutSmeared");
+    EnergyDepositionVsTimeLaBrCut->Write("EnergyDepositionVsTimeLaBrCut");
+    EnergyDepositionVsTimeLaBrCutSmeared->Write("EnergyDepositionVsTimeLaBrCutSmeared");
     EnergyDepositionCapture->Write("EnergyDepositionCapture");
     EnergyDepositionInelastic->Write("EnergyDepositionInelastic");
     EnergyDepositionOther->Write("EnergyDepositionOther");
@@ -167,6 +217,11 @@ private:
   TH1D *EnergyDepositionWithVetoSmeared;
   TH2D *EnergyDepositionVsTimeDiff;
   TH2D *EnergyDepositionVsTimeDiffSmeared;
+  TH2D *EnergyDepositionVsTimeDiffCut;
+  TH2D *EnergyDepositionVsTimeDiffCutSmeared;
+  TH2D *EnergyDepositionVsTimeLaBrCut;
+  TH2D *EnergyDepositionVsTimeLaBrCutSmeared;
+
   TH1D *EnergyDepositionCapture;
   TH1D *EnergyDepositionInelastic;
   TH1D *EnergyDepositionOther;
